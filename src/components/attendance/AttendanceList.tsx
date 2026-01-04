@@ -146,10 +146,24 @@ export default function AttendanceList({ date, initialData }: Props) {
         <div className="grid grid-cols-1 gap-6">
             {data.map((cls) => (
                 <Card key={cls.classId}>
-                    <CardHeader className="bg-gray-50 dark:bg-gray-800 rounded-t-lg">
-                        <div className="flex justify-between items-center">
-                            <CardTitle>{cls.className} <span className="text-sm font-normal text-gray-500 ml-2">{cls.startTime}</span></CardTitle>
-                            <Badge variant="outline">{cls.students.length}명</Badge>
+                    <CardHeader className="bg-gray-50 dark:bg-gray-800 rounded-t-lg p-4 sm:p-6">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                            <div className="flex-1 min-w-0">
+                                <CardTitle className="text-lg sm:text-xl font-bold leading-tight break-words">
+                                    {cls.className}
+                                </CardTitle>
+                                <div className="flex items-center gap-2 mt-1 sm:mt-0">
+                                    <span className="text-xs sm:text-sm font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded sm:bg-transparent sm:p-0 sm:text-gray-500">
+                                        {cls.startTime}
+                                    </span>
+                                    <Badge variant="secondary" className="sm:hidden bg-gray-200 text-gray-700">
+                                        {cls.students.length}명
+                                    </Badge>
+                                </div>
+                            </div>
+                            <Badge variant="outline" className="hidden sm:inline-flex border-gray-300">
+                                {cls.students.length}명 수강생
+                            </Badge>
                         </div>
                     </CardHeader>
                     <CardContent className="p-0">

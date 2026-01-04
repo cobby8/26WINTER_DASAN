@@ -176,8 +176,8 @@ export default async function AttendancePage(props: { searchParams: Promise<{ da
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold tracking-tight">Attendance</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Attendance</h2>
                 <DateNav dateStr={dateStr} />
             </div>
 

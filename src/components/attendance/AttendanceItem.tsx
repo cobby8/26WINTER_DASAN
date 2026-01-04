@@ -79,43 +79,46 @@ export default function AttendanceItem({ classId, student, onUpdate }: Props) {
     };
 
     return (
-        <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-            <div className="flex flex-col">
-                <div className="flex items-center space-x-2">
-                    <span className="font-bold text-base">{student.studentName}</span>
-                    <span className="text-[11px] text-gray-400">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors gap-4 sm:gap-0">
+            <div className="flex flex-col flex-1">
+                <div className="flex items-baseline space-x-2 mb-1 sm:mb-0">
+                    <span className="font-bold text-lg sm:text-base">{student.studentName}</span>
+                    <span className="text-[12px] sm:text-[11px] text-gray-400">
                         {student.school && `${student.school} `}{student.grade}
                     </span>
                 </div>
-                <div className="flex items-center gap-2 mt-1">
-                    <a href={`tel:${student.phone}`} className="text-xs text-gray-500 hover:text-blue-600 flex items-center bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">
+                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                    <a href={`tel:${student.phone}`} className="text-xs text-gray-500 hover:text-blue-600 flex items-center bg-gray-50 px-2 py-1 sm:px-1.5 sm:py-0.5 rounded border border-gray-100">
                         <User className="h-3 w-3 mr-1 text-blue-400" />
                         {student.phone}
                     </a>
                     {student.parentPhone && (
-                        <a href={`tel:${student.parentPhone}`} className="text-xs text-gray-500 hover:text-orange-600 flex items-center bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">
+                        <a href={`tel:${student.parentPhone}`} className="text-xs text-gray-500 hover:text-orange-600 flex items-center bg-gray-50 px-2 py-1 sm:px-1.5 sm:py-0.5 rounded border border-gray-100">
                             <Baby className="h-3 w-3 mr-1 text-orange-400" />
                             보호자
                         </a>
                     )}
                 </div>
                 {student.note && (
-                    <div className="text-[11px] text-orange-500 mt-1 font-medium bg-orange-50 px-1.5 py-0.5 rounded inline-block w-fit">
+                    <div className="text-[11px] text-orange-500 mt-2 sm:mt-1 font-medium bg-orange-50 px-1.5 py-0.5 rounded inline-block w-fit">
                         {student.note}
                     </div>
                 )}
             </div>
 
-            <div className="flex items-center space-x-2">
-                <Badge variant="outline" className={`mr-4 border ${getStatusColor(student.status)}`}>
-                    {statusLabels[student.status]}
-                </Badge>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-2">
+                <div className="flex items-center justify-between sm:justify-end sm:mr-4">
+                    <span className="sm:hidden text-xs text-gray-400 font-medium whitespace-nowrap">현재 상태</span>
+                    <Badge variant="outline" className={`border ${getStatusColor(student.status)} text-xs px-2 py-0.5 whitespace-nowrap`}>
+                        {statusLabels[student.status]}
+                    </Badge>
+                </div>
 
-                <div className="space-x-1">
+                <div className="grid grid-cols-4 sm:flex gap-1.5 sm:gap-1">
                     <Button
                         size="sm"
                         variant="ghost"
-                        className={student.status === 'present' ? 'bg-green-100 text-green-700' : 'text-gray-400'}
+                        className={`h-10 sm:h-9 flex-1 sm:flex-none border border-transparent ${student.status === 'present' ? 'bg-green-100 text-green-700 border-green-200' : 'text-gray-500 bg-gray-50'}`}
                         onClick={() => handleStatusClick('present')}
                     >
                         출석
@@ -123,7 +126,7 @@ export default function AttendanceItem({ classId, student, onUpdate }: Props) {
                     <Button
                         size="sm"
                         variant="ghost"
-                        className={student.status === 'late' ? 'bg-red-100 text-red-600' : 'text-gray-400'}
+                        className={`h-10 sm:h-9 flex-1 sm:flex-none border border-transparent ${student.status === 'late' ? 'bg-red-100 text-red-600 border-red-200' : 'text-gray-500 bg-gray-50'}`}
                         onClick={() => handleStatusClick('late')}
                     >
                         지각
@@ -131,7 +134,7 @@ export default function AttendanceItem({ classId, student, onUpdate }: Props) {
                     <Button
                         size="sm"
                         variant="ghost"
-                        className={student.status === 'absent' ? 'bg-red-500 text-white hover:bg-red-600' : 'text-gray-400'}
+                        className={`h-10 sm:h-9 flex-1 sm:flex-none border border-transparent ${student.status === 'absent' ? 'bg-red-500 text-white hover:bg-red-600' : 'text-gray-500 bg-gray-50'}`}
                         onClick={() => handleStatusClick('absent')}
                     >
                         결석
@@ -139,7 +142,7 @@ export default function AttendanceItem({ classId, student, onUpdate }: Props) {
                     <Button
                         size="sm"
                         variant="ghost"
-                        className={student.status === 'makeup' ? 'bg-blue-500 text-white hover:bg-blue-600' : 'text-gray-400'}
+                        className={`h-10 sm:h-9 flex-1 sm:flex-none border border-transparent ${student.status === 'makeup' ? 'bg-blue-500 text-white hover:bg-blue-600' : 'text-gray-500 bg-gray-50'}`}
                         onClick={() => handleStatusClick('makeup')}
                     >
                         보강
