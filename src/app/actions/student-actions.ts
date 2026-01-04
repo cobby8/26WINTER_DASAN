@@ -177,25 +177,30 @@ export async function deleteClass(classId: string) {
         const enrollmentIds = enrollments.map(e => e.id);
 
         if (enrollmentIds.length > 0) {
-            // 1. Delete Attendance records linked to these enrollments
-            const { error: attError } = await supabaseAdmin
+            // 1. Fetch Attendance IDs to delete makeup tickets
+            const { data: attendanceRecords } = await supabaseAdmin
                 .from('attendance')
-                .delete()
+                .select('id')
                 .in('enrollment_id', enrollmentIds);
 
-            if (attError) throw new Error(`Failed to delete attendance: ${attError.message}`);
+            if (attendanceRecords && attendanceRecords.length > 0) {
+                const attIds = attendanceRecords.map(a => a.id);
+                // 2. Delete Makeup Tickets linked to these attendance records
+                await supabaseAdmin.from('makeup_tickets')
+                    .delete()
+                    .in('original_attendance_id', attIds);
 
-            // 1.5 Delete Makeup Tickets linked to these enrollments?
-            // Assuming makeup_tickets might reference enrollment_id (origin or target).
-            // Safer to check or try delete. If no FK, it's fine. 
-            // If makeup_tickets references enrollment_id, we should delete them.
-            // Let's try deleting where enrollment_id matches.
-            try {
-                await supabaseAdmin.from('makeup_tickets').delete().in('enrollment_id', enrollmentIds);
-            } catch (ignore) { }
+                // 3. Delete Attendance records
+                const { error: attError } = await supabaseAdmin
+                    .from('attendance')
+                    .delete()
+                    .in('id', attIds);
+
+                if (attError) throw new Error(`Failed to delete attendance: ${attError.message}`);
+            }
         }
 
-        // 2. Delete Dependent Enrollments
+        // 4. Delete Dependent Enrollments
         const { error: enrollError } = await supabaseAdmin
             .from('enrollments')
             .delete()
@@ -203,7 +208,7 @@ export async function deleteClass(classId: string) {
 
         if (enrollError) throw new Error(`Failed to delete enrollments: ${enrollError.message}`);
 
-        // 3. Delete Class
+        // 5. Delete Class
         const { error: classError } = await supabaseAdmin
             .from('classes')
             .delete()

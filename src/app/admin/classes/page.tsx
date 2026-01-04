@@ -69,7 +69,7 @@ export default async function ClassesPage() {
                 <h2 className="text-3xl font-bold tracking-tight">수업 관리</h2>
                 <div className="flex gap-2">
                     <Button variant="outline" asChild>
-                        <Link href="/admin/classes/bulk-edit">일괄 수정</Link>
+                        <Link href="/admin/classes/bulk">일괄 수정</Link>
                     </Button>
                     <Button asChild>
                         <Link href="/admin/classes/new">
@@ -121,8 +121,8 @@ export default async function ClassesPage() {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <span className={`font-bold ${(enrollmentCounts[cls.id] || 0) >= cls.capacity
-                                                ? 'text-red-500'
-                                                : 'text-green-600'
+                                            ? 'text-red-500'
+                                            : 'text-green-600'
                                             }`}>
                                             {enrollmentCounts[cls.id] || 0}
                                         </span>
