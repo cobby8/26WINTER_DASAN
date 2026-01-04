@@ -1,0 +1,66 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# logs and diagnostic data
+*_log.txt
+*_diag.txt
+lint_*.txt
+build_log*.txt
+inspection_log.txt
+env_check_output*.txt
+
+# student data and temp files
+leedokyung_*
+headers.json
+transport_headers.json
+virtual_stops_list.txt
+
+# security
+*.json
+!package.json
+!tsconfig.json
+!components.json
+!vercel.json
+!winter-dasan-*.json
+# Wait, usually service account keys should be ignored. 
+# In this repo, winter-dasan-a5ec45df282c.json exists. I'll ignore it explicitly.
+winter-dasan-*.json

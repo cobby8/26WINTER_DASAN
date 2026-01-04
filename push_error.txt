@@ -1,0 +1,107 @@
+﻿git : POST git-recei
+ve-pack (269243 byte
+s)
+위치 줄:1 문자:1
++ git push origin ma
+ster --verbose 2>&1 
+| Out-File push_erro
+r.txt -Enco ...
++ ~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo  
+            : NotS  
+  pecified: (POST   
+  git-receive-pa    
+ck (269243 byte    s
+):String) [],     Re
+moteException
+    + FullyQualifie 
+   dErrorId : Nati  
+  veCommandError
+ 
+remote: error: GH013
+: Repository rule vi
+olations found for r
+efs/heads/master.   
+     
+remote: 
+remote: - GITHUB PUS
+H PROTECTION        
+remote:   ?붴붴붴붴붴
+붴붴붴붴붴붴붴붴붴붴
+붴붴붴붴붴붴붴붴붴붴
+붴붴붴붴붴붴붴붴붴붴
+붴붴붴붴붴?       
+remote:     Resolve 
+the following violat
+ions before pushing 
+again        
+remote: 
+remote:     - Push c
+annot contain secret
+s        
+remote: 
+remote:             
+remote:      (?) Lea
+rn how to resolve a 
+blocked push        
+remote:      https:/
+/docs.github.com/cod
+e-security/secret-sc
+anning/working-with-
+secret-scanning-and-
+push-protection/work
+ing-with-push-protec
+tion-from-the-comman
+d-line#resolving-a-b
+locked-push        
+remote:             
+remote:             
+remote:       ?붴?Go
+ogle Cloud Service A
+ccount Credentials ?
+붴붴붴붴붴붴붴붴붴? 
+      
+remote:        locat
+ions:        
+remote:          - c
+ommit: dcbaf1dd5ed3f
+0ce4e9f19268d7bb94d8
+737d659        
+remote:            p
+ath: winter-dasan-a5
+ec45df282c.json:1   
+     
+remote:             
+remote:        (?) T
+o push, remove secre
+t from commit(s) or 
+follow this URL to a
+llow the secret.    
+    
+remote:        https
+://github.com/cobby8
+/26WINTER_DASAN/secu
+rity/secret-scanning
+/unblock-secret/37mv
+YiwEWH58wGDKuwK5Xqfw
+rEY        
+remote:             
+remote: 
+remote: 
+Pushing to https://g
+ithub.com/cobby8/26W
+INTER_DASAN.git
+To https://github.co
+m/cobby8/26WINTER_DA
+SAN.git
+ ! [remote rejected]
+ master -> master (p
+ush declined due to 
+repository rule viol
+ations)
+error: failed to pus
+h some refs to 'http
+s://github.com/cobby
+8/26WINTER_DASAN.git
+'
