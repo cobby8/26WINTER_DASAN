@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { deleteClass } from '@/app/actions/student-actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2, Save, ArrowLeft, RefreshCw, Check } from 'lucide-react';
+import { Loader2, Save, ArrowLeft, RefreshCw, Check, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
@@ -29,6 +30,7 @@ export default function BulkEditClassesPage() {
     const [classes, setClasses] = useState<ClassData[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     // Selection state
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -222,6 +224,46 @@ export default function BulkEditClassesPage() {
         setSaving(false);
     };
 
+    const handleBulkDelete = async () => {
+        if (selectedIds.size === 0) return;
+
+        const confirmMessage = `선택한 ${selectedIds.size}개의 수업을 정말로 삭제하시겠습니까?\n\n주의: 수강생 내역 및 모든 출석 기록이 영구적으로 삭제되며 이 작업은 되돌릴 수 없습니다.`;
+        if (!confirm(confirmMessage)) return;
+
+        setDeleting(true);
+        let successCount = 0;
+        let failCount = 0;
+
+        try {
+            const idsToDelete = Array.from(selectedIds);
+            for (const id of idsToDelete) {
+                const result = await deleteClass(id);
+                if (result.success) {
+                    successCount++;
+                } else {
+                    console.error(`Failed to delete class ${id}:`, result.error);
+                    failCount++;
+                }
+            }
+
+            if (failCount > 0) {
+                alert(`${successCount}개 삭제 성공, ${failCount}개 삭제 실패하였습니다.`);
+            } else {
+                alert(`선택한 ${successCount}개의 수업이 성공적으로 삭제되었습니다.`);
+            }
+
+            // Re-fetch data
+            fetchClasses();
+            setSelectedIds(new Set());
+            setModifiedIds(new Set());
+            router.refresh();
+        } catch (error: any) {
+            alert(`삭제 중 예기치 못한 오류가 발생했습니다: ${error.message}`);
+        } finally {
+            setDeleting(false);
+        }
+    };
+
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('ko-KR').format(amount);
     };
@@ -243,6 +285,15 @@ export default function BulkEditClassesPage() {
                     <span className="text-sm text-gray-500 mr-2">
                         {modifiedIds.size}개 항목 수정됨
                     </span>
+                    <Button
+                        variant="destructive"
+                        onClick={handleBulkDelete}
+                        disabled={deleting || selectedIds.size === 0}
+                        className="mr-2"
+                    >
+                        {deleting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
+                        선택 삭제 (수강생 포함)
+                    </Button>
                     <Button onClick={handleSave} disabled={saving || modifiedIds.size === 0} className="bg-blue-600 hover:bg-blue-700">
                         {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
                         변경 사항 저장
