@@ -37,6 +37,8 @@ interface Props {
 
 export default function AttendanceItem({ classId, student, onUpdate }: Props) {
     const [showAbsentDialog, setShowAbsentDialog] = useState(false);
+    const [showCancelDialog, setShowCancelDialog] = useState(false);
+    const [statusToCancel, setStatusToCancel] = useState('');
     const [absentType, setAbsentType] = useState('make-up'); // 'carry-over' or 'make-up'
     const [note, setNote] = useState('');
 
@@ -61,12 +63,24 @@ export default function AttendanceItem({ classId, student, onUpdate }: Props) {
     };
 
     const handleStatusClick = (status: string) => {
+        if (student.status === status) {
+            // Toggling the same status -> show cancellation dialog
+            setStatusToCancel(status);
+            setShowCancelDialog(true);
+            return;
+        }
+
         if (status === 'absent') {
             setNote(student.note || '');
             setShowAbsentDialog(true);
         } else {
             onUpdate(classId, student.enrollmentId, status, '');
         }
+    };
+
+    const confirmCancel = () => {
+        onUpdate(classId, student.enrollmentId, 'none', '');
+        setShowCancelDialog(false);
     };
 
     const confirmAbsent = () => {
@@ -83,7 +97,7 @@ export default function AttendanceItem({ classId, student, onUpdate }: Props) {
             <div className="flex flex-col flex-1">
                 <div className="flex items-baseline space-x-2 mb-1 sm:mb-0">
                     <span className="font-bold text-lg sm:text-base">{student.studentName}</span>
-                    <span className="text-[12px] sm:text-[11px] text-gray-400">
+                    <span className="text-[12px] sm:text-[11px] text-slate-600 font-medium">
                         {student.school && `${student.school} `}{student.grade}
                     </span>
                 </div>
@@ -149,6 +163,26 @@ export default function AttendanceItem({ classId, student, onUpdate }: Props) {
                     </Button>
                 </div>
             </div>
+
+            {/* Cancel Confirmation Dialog */}
+            <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>기록 취소</DialogTitle>
+                        <DialogDescription>
+                            '{statusLabels[statusToCancel]}' 처리를 취소하시겠습니까?
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="flex gap-2 sm:gap-0">
+                        <Button variant="outline" onClick={() => setShowCancelDialog(false)} className="flex-1 sm:flex-none">
+                            아니오
+                        </Button>
+                        <Button variant="destructive" onClick={confirmCancel} className="flex-1 sm:flex-none">
+                            네, 취소합니다
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             {/* Absent Dialog */}
             <Dialog open={showAbsentDialog} onOpenChange={setShowAbsentDialog}>

@@ -57,6 +57,33 @@ export default function AttendanceList({ date, initialData }: Props) {
             const std = cls?.students.find(s => s.enrollmentId === enrollmentId);
             const attendanceId = std?.attendanceId;
 
+            if (newStatus === 'none') {
+                if (attendanceId) {
+                    // 1. Delete associated makeup tickets if any
+                    await supabase.from('makeup_tickets')
+                        .delete()
+                        .eq('original_attendance_id', attendanceId);
+
+                    // 2. Delete attendance record
+                    await supabase.from('attendance')
+                        .delete()
+                        .eq('id', attendanceId);
+
+                    // 3. Update state to nullify attendanceId
+                    setData(prev => prev.map(c => {
+                        if (c.classId !== classId) return c;
+                        return {
+                            ...c,
+                            students: c.students.map(s => {
+                                if (s.enrollmentId !== enrollmentId) return s;
+                                return { ...s, attendanceId: null };
+                            })
+                        };
+                    }));
+                }
+                return;
+            }
+
             let finalAttendanceId = attendanceId;
 
             if (attendanceId) {
@@ -99,21 +126,9 @@ export default function AttendanceList({ date, initialData }: Props) {
 
                 // Check note for tag
                 if (note.startsWith('[이월]')) {
-                    // 1. Logic for Carry-Over: Update payment deduction
-                    // We need to find the student's payment record and increment deduction?
-                    // Or just log it. For now, let's try to update the payment record.
-                    // Finding payment for this student (we need studentId)
-
-                    // Simple approach: Fetch latest payment and increment deduction by unit price?
-                    // Complex because unit price isn't stored.
-                    // IMPORTANT: Ideally this should be server-side logic (RPC or API).
-                    // For MVP client-side: We'll just assume a fixed amount or skip calculation for now?
-                    // Let's just create a log or skip actual payment update until we have unit price logic.
-                    // "Deduction logic to be implemented in billing cycle" - as per plan.
-                    // So we keep the note as the record of truth.
+                    // Deduction logic to be implemented in billing cycle
                 } else if (note.startsWith('[보강]')) {
-                    // 2. Logic for Makeup: Create a Ticket
-                    // Check if ticket already exists for this attendance?
+                    // Logic for Makeup: Create a Ticket
                     const { data: existingTicket } = await supabase
                         .from('makeup_tickets')
                         .select('id')
@@ -125,9 +140,8 @@ export default function AttendanceList({ date, initialData }: Props) {
                             student_id: std.studentId,
                             original_attendance_id: finalAttendanceId,
                             status: 'available',
-                            expiry_date: '2026-02-28' // End of winter session?
+                            expiry_date: '2026-02-28' // End of winter session
                         });
-                        // console.log('Makeup ticket created');
                     }
                 }
             }
