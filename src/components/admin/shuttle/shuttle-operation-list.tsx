@@ -662,23 +662,23 @@ export default function ShuttleOperationList({ items, dateStr }: Props) {
             </div>
 
             {/* Desktop/Tablet View (Table) with Sections */}
-            <div className="hidden md:block bg-white rounded-lg border shadow-sm">
+            <div className="hidden md:block bg-white rounded-lg border shadow-sm overflow-x-auto">
                 <DndContext
                     sensors={sensors}
                     collisionDetection={closestCenter}
                     onDragEnd={handleDragEnd}
                 >
-                    <Table className="table-fixed w-full">
+                    <Table className="table-fixed w-full min-w-[1100px] border-collapse">
                         <TableHeader className="bg-slate-50">
                             <TableRow>
                                 {isReorderMode && <TableHead className="w-[50px] text-center">이동</TableHead>}
                                 <TableHead className="w-[80px] text-center font-bold px-1">학생</TableHead>
                                 <TableHead className="w-[100px] text-center font-bold px-1">연락처</TableHead>
                                 <TableHead className="w-[100px] text-center font-bold px-1">시간</TableHead>
-                                <TableHead className="text-left font-bold px-2">목적지</TableHead>
+                                <TableHead className="min-w-[300px] text-left font-bold px-2">목적지</TableHead>
                                 <TableHead className="w-[60px] text-center font-bold px-1">구분</TableHead>
-                                <TableHead className="w-[220px] text-center font-bold px-1">상태</TableHead>
-                                <TableHead className="w-[180px] text-center font-bold px-1">메모</TableHead>
+                                <TableHead className="w-[200px] text-center font-bold px-1">상태</TableHead>
+                                <TableHead className="w-[160px] text-center font-bold px-1">메모</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -705,40 +705,40 @@ export default function ShuttleOperationList({ items, dateStr }: Props) {
                                         const isCancelled = !!item.is_cancelled;
 
                                         const insertAcademyButtons = (
-                                            <div className="flex flex-col items-center gap-1 opacity-10 group-hover:opacity-100 transition-opacity absolute -bottom-6 left-0 right-0 z-20 pointer-events-none">
-                                                <div className="flex gap-1 pointer-events-auto bg-white/95 backdrop-blur-sm p-1 rounded-full shadow-lg border border-slate-200">
+                                            <div className="flex flex-col items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-0 left-0 right-0 z-20 pointer-events-none">
+                                                <div className="flex gap-1 pointer-events-auto bg-white/95 backdrop-blur-sm px-1 py-0.5 rounded-full shadow-lg border border-slate-200">
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        className="h-6 text-[9px] text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-0 font-bold whitespace-nowrap"
+                                                        className="h-5 text-[9px] text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-0 font-bold whitespace-nowrap"
                                                         onClick={() => handleAddAcademyStop(1, (item.sequence_order ?? index) + 1, 'academy_start', displayTime)}
                                                     >
-                                                        + 1편성(출발)
+                                                        +1출발
                                                     </Button>
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        className="h-6 text-[9px] text-slate-600 hover:text-slate-700 hover:bg-slate-50 px-2 py-0 font-bold whitespace-nowrap"
+                                                        className="h-5 text-[9px] text-slate-600 hover:text-slate-700 hover:bg-slate-50 px-2 py-0 font-bold whitespace-nowrap"
                                                         onClick={() => handleAddAcademyStop(1, (item.sequence_order ?? index) + 1, 'academy_end', displayTime)}
                                                     >
-                                                        + 1편성(도착)
+                                                        +1도착
                                                     </Button>
-                                                    <div className="w-[1px] bg-slate-300 mx-0.5 self-stretch" />
+                                                    <div className="w-[1px] bg-slate-200 mx-0.5 self-stretch" />
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        className="h-6 text-[9px] text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-0 font-bold whitespace-nowrap"
+                                                        className="h-5 text-[9px] text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-0 font-bold whitespace-nowrap"
                                                         onClick={() => handleAddAcademyStop(2, (item.sequence_order ?? index) + 1, 'academy_start', displayTime)}
                                                     >
-                                                        + 2편성(출발)
+                                                        +2출발
                                                     </Button>
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        className="h-6 text-[9px] text-slate-600 hover:text-slate-700 hover:bg-slate-50 px-2 py-0 font-bold whitespace-nowrap"
+                                                        className="h-5 text-[9px] text-slate-600 hover:text-slate-700 hover:bg-slate-50 px-2 py-0 font-bold whitespace-nowrap"
                                                         onClick={() => handleAddAcademyStop(2, (item.sequence_order ?? index) + 1, 'academy_end', displayTime)}
                                                     >
-                                                        + 2편성(도착)
+                                                        +2도착
                                                     </Button>
                                                 </div>
                                             </div>
@@ -785,7 +785,7 @@ export default function ShuttleOperationList({ items, dateStr }: Props) {
                                                     </div>
                                                 </TableCell>
 
-                                                <TableCell className="text-left px-2 relative">
+                                                <TableCell className="text-left px-2 relative min-h-[60px] pb-6">
                                                     <div className="flex items-center gap-2">
                                                         <Button
                                                             variant="outline"
