@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { User, Baby, Phone } from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -19,7 +20,9 @@ interface StudentAttendance {
     studentId: string;
     studentName: string;
     grade: string;
+    school: string;
     phone: string;
+    parentPhone: string;
     enrollmentId: string;
     attendanceId: string | null;
     status: string;
@@ -79,14 +82,25 @@ export default function AttendanceItem({ classId, student, onUpdate }: Props) {
         <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
             <div className="flex flex-col">
                 <div className="flex items-center space-x-2">
-                    <span className="font-semibold">{student.studentName}</span>
-                    <span className="text-xs text-gray-400">({student.grade})</span>
+                    <span className="font-bold text-base">{student.studentName}</span>
+                    <span className="text-[11px] text-gray-400">
+                        {student.school && `${student.school} `}{student.grade}
+                    </span>
                 </div>
-                <a href={`tel:${student.phone}`} className="text-xs text-gray-500 mt-1 hover:text-blue-600 hover:underline block">
-                    {student.phone}
-                </a>
+                <div className="flex items-center gap-2 mt-1">
+                    <a href={`tel:${student.phone}`} className="text-xs text-gray-500 hover:text-blue-600 flex items-center bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">
+                        <User className="h-3 w-3 mr-1 text-blue-400" />
+                        {student.phone}
+                    </a>
+                    {student.parentPhone && (
+                        <a href={`tel:${student.parentPhone}`} className="text-xs text-gray-500 hover:text-orange-600 flex items-center bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">
+                            <Baby className="h-3 w-3 mr-1 text-orange-400" />
+                            보호자
+                        </a>
+                    )}
+                </div>
                 {student.note && (
-                    <div className="text-xs text-orange-500 mt-1">
+                    <div className="text-[11px] text-orange-500 mt-1 font-medium bg-orange-50 px-1.5 py-0.5 rounded inline-block w-fit">
                         {student.note}
                     </div>
                 )}

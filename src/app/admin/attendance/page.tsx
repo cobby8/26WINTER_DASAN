@@ -105,7 +105,7 @@ export default async function AttendancePage(props: { searchParams: Promise<{ da
             student_id,
             class_id,
             status,
-            students ( id, name, grade, student_phone )
+            students ( id, name, grade, school, student_phone, parent_phone )
         `)
                 .in('class_id', classIds)
                 .eq('status', 'active'); // Only active students
@@ -149,7 +149,9 @@ export default async function AttendancePage(props: { searchParams: Promise<{ da
                         studentId: student?.id,
                         studentName: student?.name,
                         grade: student?.grade,
+                        school: student?.school,
                         phone: student?.student_phone,
+                        parentPhone: student?.parent_phone,
                         enrollmentId: enroll.id,
                         attendanceId: att?.id || null,
                         status: att?.status || 'none',

@@ -12,7 +12,9 @@ interface StudentAttendance {
     studentId: string;
     studentName: string;
     grade: string;
+    school: string;
     phone: string;
+    parentPhone: string;
     enrollmentId: string;
     attendanceId: string | null;
     status: string; // 'none', 'present', 'late', 'absent', 'makeup'
