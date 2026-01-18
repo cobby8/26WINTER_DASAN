@@ -385,6 +385,12 @@ export async function getStudentAttendanceHistory(studentId: string) {
         .in('enrollment_id', enrollmentIds)
         .order('date', { ascending: false });
 
+    // Normalize class data (SUPABASE sometimes returns generic objects as arrays or varied types)
+    const normalizedLogs = attendance?.map(log => ({
+        ...log,
+        class: Array.isArray(log.class) ? log.class[0] : log.class
+    })) || [];
+
     // 3. Calculate Tenure
     // Find earliest enrollment date
     // Note: enrollment.created_at is a timestamp string
@@ -398,7 +404,7 @@ export async function getStudentAttendanceHistory(studentId: string) {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     return {
-        logs: attendance || [],
+        logs: normalizedLogs,
         tenureDays: diffDays,
         startDate: startDate.toISOString().split('T')[0]
     };
