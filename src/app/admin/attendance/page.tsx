@@ -41,6 +41,7 @@ export default async function AttendancePage(props: { searchParams: Promise<{ da
         .from('classes')
         .select('id, name, start_time, end_time, session, branch, start_date, end_date')
         .eq('day_of_week', dayNameKo)
+        .is('deleted_at', null)
         .order('start_time');
 
     if (classError) return <div>Error loading classes: {classError.message}</div>;

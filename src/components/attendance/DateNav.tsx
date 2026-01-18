@@ -21,7 +21,14 @@ interface DateNavProps {
 
 export function DateNav({ dateStr }: DateNavProps) {
     const router = useRouter();
-    const [date, setDate] = React.useState<Date | undefined>(new Date(dateStr));
+    const [date, setDate] = React.useState<Date | undefined>(undefined);
+
+    React.useEffect(() => {
+        if (dateStr) {
+            const [y, m, d] = dateStr.split('-').map(Number);
+            setDate(new Date(y, m - 1, d));
+        }
+    }, [dateStr]);
     const [open, setOpen] = React.useState(false);
 
     // Fix: Ensure the calendar displays the correct date even if timezone differs

@@ -55,6 +55,7 @@ export default function BulkEditClassesPage() {
         const { data, error } = await supabase
             .from('classes')
             .select('*')
+            .is('deleted_at', null)
             .order('day_of_week')
             .order('start_time');
 
