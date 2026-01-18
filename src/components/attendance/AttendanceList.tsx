@@ -125,6 +125,33 @@ export default function AttendanceList({ date, initialData }: Props) {
                 }
             }
 
+            // Notification Trigger (In-App)
+            if (['present', 'late', 'absent', 'makeup'].includes(newStatus) && std) {
+                const messages: Record<string, string> = {
+                    present: '등원했습니다.',
+                    late: '지각 처리되었습니다.',
+                    absent: '결석 처리되었습니다.',
+                    makeup: '보강 처리되었습니다.'
+                };
+                const titles: Record<string, string> = {
+                    present: '등원 알림',
+                    late: '지각 알림',
+                    absent: '결석 알림',
+                    makeup: '보강 알림'
+                };
+
+                // Fire and forget to avoid blocking UI
+                supabase.from('notifications').insert({
+                    student_id: std.studentId,
+                    type: 'attendance',
+                    title: titles[newStatus],
+                    message: `[${cls?.className}] ${std.studentName} 학생이 ${messages[newStatus]}`,
+                    is_read: false
+                }).then(({ error }) => {
+                    if (error) console.error("Notification failed:", error.message);
+                });
+            }
+
             // Handle Logic for 'Absent' (Carry-over vs Makeup)
             if (newStatus === 'absent' && finalAttendanceId && std) {
                 // Sync to Shuttle

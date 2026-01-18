@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Bell, ChevronRight, CheckCircle2, XCircle } from 'lucide-react';
+import NotificationBell from '@/components/portal/NotificationBell';
 
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -25,7 +26,7 @@ export default async function StudentDashboard() {
       *,
       enrollments (
         *,
-        classes (name, day_of_week, start_time)
+        classes (id, name, day_of_week, start_time)
       ),
       payments (*)
     `)
@@ -65,10 +66,7 @@ export default async function StudentDashboard() {
                     <Link href="/portal?logout=true" className="text-sm text-gray-500 hover:text-gray-800">
                         Logout
                     </Link>
-                    <Button variant="ghost" size="icon" className="relative">
-                        <Bell className="w-6 h-6 text-gray-400" />
-                        <span className="absolute top-2 right-2 w-1 h-1 bg-red-500 rounded-full"></span>
-                    </Button>
+                    <NotificationBell studentId={studentId} />
                 </div>
             </header>
 

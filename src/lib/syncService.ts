@@ -508,7 +508,9 @@ export class SyncService {
 
             // 3. Cleanup Untouched (Deleted from Sheet)
             // Filter activeSchedules to find ids NOT in touchedScheduleIds
-            const toDelete = activeSchedules.filter(s => !touchedScheduleIds.has(s.id));
+            // IMPORTANT: Exclude system schedules (student_id is null) from cleanup. They are managed manually.
+            const toDelete = activeSchedules.filter(s => !touchedScheduleIds.has(s.id) && s.student_id !== null);
+
             if (toDelete.length > 0) {
                 console.log(`[Shuttle] Soft Deleting ${toDelete.length} removed schedules...`);
                 const idsToDelete = toDelete.map(s => s.id);

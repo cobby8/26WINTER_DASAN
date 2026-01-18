@@ -1,10 +1,9 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { Calendar } from '@/components/ui/calendar';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ko } from 'date-fns/locale';
+import AttendanceCalendar from '@/components/portal/AttendanceCalendar';
 
 export const revalidate = 0;
 
@@ -26,10 +25,10 @@ export default async function AttendancePage() {
         ).data?.map(e => e.id) || [])
         .order('date', { ascending: false });
 
-    // Dates for Calendar Modifiers
-    const presentDates = attendance?.filter((a: any) => a.status === 'present').map((a: any) => new Date(a.date)) || [];
-    const absentDates = attendance?.filter((a: any) => a.status === 'absent').map((a: any) => new Date(a.date)) || [];
-    const lateDates = attendance?.filter((a: any) => a.status === 'late').map((a: any) => new Date(a.date)) || [];
+    // Dates for Calendar Modifiers (Pass as Strings)
+    const presentDates = attendance?.filter((a: any) => a.status === 'present').map((a: any) => a.date) || [];
+    const absentDates = attendance?.filter((a: any) => a.status === 'absent').map((a: any) => a.date) || [];
+    const lateDates = attendance?.filter((a: any) => a.status === 'late').map((a: any) => a.date) || [];
 
     return (
         <div className="bg-[#F2F4F6] min-h-screen pb-24">
@@ -38,28 +37,12 @@ export default async function AttendancePage() {
             </header>
 
             <main className="px-5 space-y-6">
-                {/* 1. Calendar View */}
-                <Card className="rounded-[24px] border-none shadow-sm p-4 bg-white flex justify-center">
-                    {/* Note: In a real app, this should be a client component to handle month changes smoothly if data is large. 
-                        For now, we pass standard dates. The standard 'Calendar' component is interactive, 
-                        we might want to disable selection or make it read-only visual. */}
-                    <Calendar
-                        mode="single"
-                        locale={ko}
-                        selected={new Date()}
-                        className="rounded-md border-none"
-                        modifiers={{
-                            present: presentDates,
-                            absent: absentDates,
-                            late: lateDates
-                        }}
-                        modifiersStyles={{
-                            present: { color: 'white', backgroundColor: '#3b82f6', borderRadius: '50%' }, // Blue
-                            absent: { color: 'white', backgroundColor: '#ef4444', borderRadius: '50%' }, // Red
-                            late: { color: 'white', backgroundColor: '#eab308', borderRadius: '50%' }   // Yellow
-                        }}
-                    />
-                </Card>
+                {/* 1. Calendar View (Client Component) */}
+                <AttendanceCalendar
+                    presentDates={presentDates}
+                    absentDates={absentDates}
+                    lateDates={lateDates}
+                />
 
                 {/* 2. Legend */}
                 <div className="flex justify-center gap-6 text-sm">
