@@ -23,7 +23,9 @@ export async function getShuttleSchedules(studentId: string) {
     const { data, error } = await supabaseAdmin
         .from('shuttle_schedules')
         .select('*')
+        .select('*')
         .eq('student_id', studentId)
+        .is('deleted_at', null) // Filter Active Only
         .order('day_of_week') // Sort logic might need custom ordering locally
         .order('time');
 

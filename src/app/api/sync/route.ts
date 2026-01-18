@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { SyncService } from '@/lib/syncService';
 
+// Force rebuild
+
 export async function POST() {
     try {
         const syncService = new SyncService();

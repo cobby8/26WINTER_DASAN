@@ -7,6 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/lib/supabase';
 import { Loader2 } from 'lucide-react';
 import AttendanceItem from './AttendanceItem';
+import { MakeupRegisterDialog } from './MakeupRegisterDialog';
+import { useRouter } from 'next/navigation';
+import { PlusCircle } from 'lucide-react';
 
 interface StudentAttendance {
     studentId: string;
@@ -34,9 +37,13 @@ interface Props {
 }
 
 export default function AttendanceList({ date, initialData }: Props) {
+    const router = useRouter();
     const [data, setData] = useState(initialData);
 
     // This function will be passed down to Items to update local state and DB
+    const [showMakeupDialog, setShowMakeupDialog] = useState(false);
+
+    // ... updateStatus logic ...
     const updateStatus = async (classId: string, enrollmentId: string, newStatus: string, note: string = '') => {
         // Optimistic Update
         setData(prev => prev.map(cls => {
@@ -179,7 +186,19 @@ export default function AttendanceList({ date, initialData }: Props) {
                                 {cls.students.length}명 수강생
                             </Badge>
                         </div>
+                        <div className="mt-4 flex justify-end border-t pt-2">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-blue-600 border-blue-200 bg-blue-50 hover:bg-blue-100"
+                                onClick={() => setShowMakeupDialog(true)}
+                            >
+                                <PlusCircle className="w-4 h-4 mr-1.5" />
+                                보강 등록
+                            </Button>
+                        </div>
                     </CardHeader>
+
                     <CardContent className="p-0">
                         {cls.students.length === 0 ? (
                             <div className="p-6 text-center text-gray-400">수강생이 없습니다.</div>
@@ -198,6 +217,21 @@ export default function AttendanceList({ date, initialData }: Props) {
                     </CardContent>
                 </Card>
             ))}
+
+
+            <MakeupRegisterDialog
+                isOpen={showMakeupDialog}
+                onClose={() => setShowMakeupDialog(false)}
+                targetDate={date}
+                onSuccess={() => {
+                    // Refresh data? 
+                    // Since it updates PAST records, it might not affect THIS list (unless we viewed the past).
+                    // But if we are viewing the past, we want to see the change.
+                    router.refresh();
+                    // Or force reload. `useRouter` hook needs define.
+                    // window.location.reload(); // Simplest for now or router.refresh()
+                }}
+            />
         </div>
     );
 }

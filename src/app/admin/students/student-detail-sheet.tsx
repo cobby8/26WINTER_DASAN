@@ -7,7 +7,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Phone, School, User, Calendar, MapPin, FileText, Plus, X, BookOpen } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { getStudentEnrollments, getAvailableClasses, addEnrollment, removeEnrollment, getEnrollmentLogs } from "@/app/actions/student-actions";
+import { getStudentEnrollments, getAvailableClasses, addEnrollment, removeEnrollment, getEnrollmentLogs, getStudentAttendanceHistory } from "@/app/actions/student-actions";
+import StudentAttendanceTab from "@/components/attendance/StudentAttendanceTab";
+
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -30,9 +32,6 @@ interface Student {
     registration_source?: string;
     created_at?: string;
 }
-
-// ... props interface ...
-
 
 interface StudentDetailSheetProps {
     student: Student | null;
@@ -80,12 +79,14 @@ export function StudentDetailSheet({ student, open, onOpenChange }: StudentDetai
     const [isLoading, setIsLoading] = useState(false);
     const [logRefreshKey, setLogRefreshKey] = useState(0); // Force refresh logs
     const [payment, setPayment] = useState<any>(null);
+    const [attendanceData, setAttendanceData] = useState<{ logs: any[], tenureDays: number, startDate: string | null }>({ logs: [], tenureDays: 0, startDate: null });
 
     useEffect(() => {
         if (open && student) {
             loadEnrollments();
             loadClasses();
             loadPayment();
+            loadAttendance();
             setLogRefreshKey(prev => prev + 1);
         }
     }, [open, student]);
@@ -94,6 +95,12 @@ export function StudentDetailSheet({ student, open, onOpenChange }: StudentDetai
         if (!student) return;
         const data = await getStudentPayment(student.id);
         setPayment(data);
+    };
+
+    const loadAttendance = async () => {
+        if (!student) return;
+        const data = await getStudentAttendanceHistory(student.id);
+        setAttendanceData(data);
     };
 
     const loadEnrollments = async () => {
@@ -130,7 +137,6 @@ export function StudentDetailSheet({ student, open, onOpenChange }: StudentDetai
     };
 
     const handleRemoveClass = async (enrollmentId: string, classId: string) => {
-        // Confirmation is handled in the JSX (Button onClick)
         console.log('Attempting to delete:', { enrollmentId, classId });
 
         if (!enrollmentId || !classId) {
@@ -159,9 +165,10 @@ export function StudentDetailSheet({ student, open, onOpenChange }: StudentDetai
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent className="sm:max-w-[600px] overflow-y-auto p-0 gap-0 border-l border-gray-100 shadow-2xl">
-                {/* Clean Header */}
+                {/* ... Header ... */}
                 <div className="bg-white px-8 pt-10 pb-6 border-b border-gray-50">
                     <SheetHeader className="mb-6">
+                        {/* ... Header Content ... */}
                         <div className="flex items-start justify-between">
                             <div className="space-y-1.5">
                                 <SheetTitle className="text-4xl font-bold text-gray-900 tracking-tight">{student.name}</SheetTitle>
@@ -191,6 +198,12 @@ export function StudentDetailSheet({ student, open, onOpenChange }: StudentDetai
                                 정보
                             </TabsTrigger>
                             <TabsTrigger
+                                value="attendance"
+                                className="px-0 py-3 rounded-none border-b-2 border-transparent data-[state=active]:border-gray-900 data-[state=active]:text-gray-900 text-gray-400 font-medium text-sm transition-all shadow-none"
+                            >
+                                출석부
+                            </TabsTrigger>
+                            <TabsTrigger
                                 value="counseling"
                                 className="px-0 py-3 rounded-none border-b-2 border-transparent data-[state=active]:border-gray-900 data-[state=active]:text-gray-900 text-gray-400 font-medium text-sm transition-all shadow-none"
                             >
@@ -206,6 +219,7 @@ export function StudentDetailSheet({ student, open, onOpenChange }: StudentDetai
 
                         <div className="pt-8">
                             <TabsContent value="info" className="space-y-8 animate-in fade-in-50 slide-in-from-bottom-2 focus-visible:outline-none">
+                                {/* ... Info Content ... */}
                                 {/* Section 1: Contact */}
                                 <section className="space-y-4">
                                     <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Contact & Family</h4>
@@ -378,6 +392,14 @@ export function StudentDetailSheet({ student, open, onOpenChange }: StudentDetai
                                         </div>
                                     </div>
                                 </section>
+                            </TabsContent>
+
+                            <TabsContent value="attendance" className="animate-in fade-in-50 slide-in-from-bottom-2 focus-visible:outline-none">
+                                <StudentAttendanceTab
+                                    logs={attendanceData.logs}
+                                    tenureDays={attendanceData.tenureDays}
+                                    startDate={attendanceData.startDate}
+                                />
                             </TabsContent>
 
                             <TabsContent value="counseling" className="animate-in fade-in-50 slide-in-from-bottom-2 focus-visible:outline-none">

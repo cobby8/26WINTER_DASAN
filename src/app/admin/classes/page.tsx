@@ -19,7 +19,8 @@ export default async function ClassesPage() {
     // Fetch Classes
     const { data: classes, error } = await supabaseAdmin
         .from('classes')
-        .select('*');
+        .select('*')
+        .is('deleted_at', null);
 
     if (error) {
         return <div className="p-4 text-red-500">Error loading classes: {error.message}</div>;

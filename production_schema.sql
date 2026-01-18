@@ -34,9 +34,12 @@ CREATE TABLE IF NOT EXISTS classes (
     session TEXT, -- '1차', '2차'
     capacity INTEGER DEFAULT 20,
     tuition INTEGER DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    deleted_at TIMESTAMP WITH TIME ZONE -- Soft Delete Support
 );
-CREATE INDEX IF NOT EXISTS idx_classes_composite_sync ON classes(day_of_week, start_time, branch, session);
+-- Update index to match active classes only
+DROP INDEX IF EXISTS idx_classes_composite_sync;
+CREATE INDEX IF NOT EXISTS idx_classes_active_sync ON classes(day_of_week, start_time, branch, session) WHERE deleted_at IS NULL;
 
 -- 3. Enrollments Table
 CREATE TABLE IF NOT EXISTS enrollments (
@@ -62,6 +65,7 @@ CREATE TABLE IF NOT EXISTS attendance (
     status TEXT NOT NULL, -- 'present', 'late', 'absent', 'makeup'
     note TEXT,
     is_makeup_ticket_used BOOLEAN DEFAULT false,
+    makeup_date DATE, -- Date when the makeup class was taken
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -95,11 +99,12 @@ CREATE TABLE IF NOT EXISTS shuttle_schedules (
     sequence_order INTEGER DEFAULT 0,
     section_id INTEGER DEFAULT 1,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at TIMESTAMPTZ -- Soft Delete Support
 );
--- Ensure unique index to prevent duplicate schedules for same student/day/type
+-- Ensure unique index to prevent duplicate schedules for same student/day/type (Active Only)
 -- DROP INDEX IF EXISTS idx_shuttle_unique_v2;
--- CREATE UNIQUE INDEX idx_shuttle_unique_v2 ON shuttle_schedules (student_id, day_of_week, type) WHERE student_id IS NOT NULL;
+-- CREATE UNIQUE INDEX idx_shuttle_active_unique ON shuttle_schedules (student_id, day_of_week, type) WHERE deleted_at IS NULL;
 
 -- 7. Shuttle Operations Logs (Daily Logs)
 CREATE TABLE IF NOT EXISTS shuttle_ops_logs (

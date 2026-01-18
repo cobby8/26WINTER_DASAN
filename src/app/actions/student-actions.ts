@@ -355,3 +355,51 @@ export async function updateStudent(id: string, data: any) {
         return { success: false, error: e.message };
     }
 }
+
+export async function getStudentAttendanceHistory(studentId: string) {
+    // 1. Get Enrollments (active and cancelled to see full history)
+    const { data: enrollments } = await supabaseAdmin
+        .from('enrollments')
+        .select('id, created_at, class:classes(name)')
+        .eq('student_id', studentId);
+
+    if (!enrollments || enrollments.length === 0) {
+        return { logs: [], tenureDays: 0, startDate: null };
+    }
+
+    const enrollmentIds = enrollments.map(e => e.id);
+
+    // 2. Get Attendance
+    const { data: attendance } = await supabaseAdmin
+        .from('attendance')
+        .select(`
+            id,
+            date,
+            status,
+            note,
+            makeup_date,
+            created_at,
+            enrollment_id,
+            class:classes(name, day_of_week, start_time)
+        `)
+        .in('enrollment_id', enrollmentIds)
+        .order('date', { ascending: false });
+
+    // 3. Calculate Tenure
+    // Find earliest enrollment date
+    // Note: enrollment.created_at is a timestamp string
+    const timestamps = enrollments.map(e => new Date(e.created_at).getTime());
+    const minTime = Math.min(...timestamps);
+    const startDate = new Date(minTime);
+    const today = new Date();
+
+    // Tenure in days
+    const diffTime = Math.abs(today.getTime() - startDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return {
+        logs: attendance || [],
+        tenureDays: diffDays,
+        startDate: startDate.toISOString().split('T')[0]
+    };
+}

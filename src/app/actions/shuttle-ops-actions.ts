@@ -54,6 +54,10 @@ export async function getDailyShuttleData(dateStr: string): Promise<{ success: b
                 )
             `)
             .eq('day_of_week', dayOfWeek)
+            // Filter by Validity Period: Created before/on date AND (Active OR Deleted After date)
+            // Supabase/PostgREST doesn't support complex OR easily in one line without raw filter.
+            // Simplified: Fetch more, filter in code? Or use .or().
+            // Let's fetch all (including deleted) and filter in code for accuracy.
             .order('time');
 
         if (scheduleError) {
@@ -61,7 +65,29 @@ export async function getDailyShuttleData(dateStr: string): Promise<{ success: b
             return { success: false, error: scheduleError.message };
         }
 
-        let filteredSchedules = schedules || [];
+        // Filter schedules based on Date Validity (Versioning)
+        // A schedule is valid for dateStr if:
+        // 1. It existed on that date (created_at <= end of date)
+        // 2. It was not yet deleted on that date (deleted_at is null OR deleted_at > start of date)
+
+        const startOfDay = new Date(dateStr);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(dateStr);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        let filteredSchedules = (schedules || []).filter((s: any) => {
+            const created = new Date(s.created_at);
+            const deleted = s.deleted_at ? new Date(s.deleted_at) : null;
+
+            // Allow created on the same day (ignoring time for simplicity or strict?)
+            // If created today, it should appear today.
+            if (created > endOfDay) return false; // Created in future relative to view date
+
+            // If deleted before today began, it shouldn't appear
+            if (deleted && deleted < startOfDay) return false;
+
+            return true;
+        });
 
         // 1.5 Filter by Class Period (Phase 6)
         // Only show students who have at least one active class covering this date.
