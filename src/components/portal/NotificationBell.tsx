@@ -9,7 +9,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { createClient } from "@/lib/supabase"; // Use client-side helper if available or standard createClient
+// Use client-side helper if available or standard createClient
 // Actually, standard project might use a specific helper. I'll rely on the standard imports seen elsewhere or use @supabase/supabase-js if needing direct client.
 // Based on previous files, we often use `supabaseAdmin` on server, but for client we need a client. 
 // Assuming `createClient` from `@/lib/supabase` is NOT for client side auth usually? 
@@ -94,7 +94,7 @@ export default function NotificationBell({ studentId }: { studentId: string }) {
                                 <div key={notif.id} className={`p-4 hover:bg-gray-50 ${!notif.is_read ? 'bg-blue-50/50' : ''}`}>
                                     <div className="flex gap-2 mb-1">
                                         <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${notif.type === 'attendance' ? 'bg-blue-100 text-blue-600' :
-                                                notif.type === 'shuttle' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600'
+                                            notif.type === 'shuttle' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600'
                                             }`}>
                                             {notif.type === 'attendance' ? '출결' : notif.type === 'shuttle' ? '셔틀' : '알림'}
                                         </span>
