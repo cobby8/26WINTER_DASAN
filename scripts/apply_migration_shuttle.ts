@@ -57,6 +57,10 @@ async function runMigration() {
         await client.query(`ALTER TABLE shuttle_schedules ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;`);
         console.log('Column deleted_at added.');
 
+        // New: Allow student_id to be NULL (for Academy Stops)
+        await client.query(`ALTER TABLE shuttle_schedules ALTER COLUMN student_id DROP NOT NULL;`);
+        console.log('Column student_id nullable constraint dropped.');
+
         await client.query(`DROP INDEX IF EXISTS idx_shuttle_unique_v2;`);
         console.log('Old index dropped.');
 
@@ -70,7 +74,13 @@ async function runMigration() {
         // Explicit instructions
         console.log('Please run this SQL manually in Supabase SQL Editor:');
         console.log(`
+        -- 1. Allow student_id to be NULL (Critical for Academy Stops)
+        ALTER TABLE shuttle_schedules ALTER COLUMN student_id DROP NOT NULL;
+
+        -- 2. Add Soft Delete Column
         ALTER TABLE shuttle_schedules ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
+        -- 3. Update Unique Index (Partial Index for Active Only)
         DROP INDEX IF EXISTS idx_shuttle_unique_v2;
         CREATE UNIQUE INDEX IF NOT EXISTS idx_shuttle_active_unique ON shuttle_schedules (student_id, day_of_week, type) WHERE deleted_at IS NULL;
     `);

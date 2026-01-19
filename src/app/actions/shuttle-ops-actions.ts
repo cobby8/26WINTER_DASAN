@@ -29,7 +29,28 @@ export interface DailyShuttleItem {
 // Helper to get day name for DB query (e.g. 'Mon') from a Date object
 function getDayName(date: Date): string {
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    // Use getUTCDay if the date is UTC, or ensure date is created correctly.
+    // However, the best way for "YYYY-MM-DD" is to parse it directly.
+    // If input is Date object, we must rely on how it was constructed.
+    // But let's change the param to string if possible, or handle Date carefully.
+
+    // Better Approach: create a date object that respects the input components strictly
     return days[date.getDay()];
+}
+// Actually, let's overload or create a safe version for yyyy-mm-dd strings
+function getDayNameFromStr(dateStr: string): string {
+    const date = new Date(dateStr);
+    const day = date.getDay(); // This uses local time. 
+    // If server is UTC, '2026-01-19' parsed as UTC midnight is 2026-01-19 00:00:00 UTC.
+    // UTC day is Monday. Local (US East) day might be Sunday.
+    // We want the day of the date specified in the string.
+    // '2026-01-19' -> Monday.
+
+    // Safer:
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const localDate = new Date(y, m - 1, d, 12, 0, 0); // Noon to avoid edge cases
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return days[localDate.getDay()];
 }
 
 export async function getDailyShuttleData(dateStr: string): Promise<{ success: boolean, data?: DailyShuttleItem[], error?: string }> {
@@ -39,7 +60,8 @@ export async function getDailyShuttleData(dateStr: string): Promise<{ success: b
             return { success: false, error: 'Invalid date format' };
         }
 
-        const dayOfWeek = getDayName(targetDate);
+        // Use safe helper
+        const dayOfWeek = getDayNameFromStr(dateStr);
         console.log(`[ShuttleOps] Fetching for date: ${dateStr} (${dayOfWeek})`);
 
         // 1. Fetch Schedules for this Day of Week
@@ -591,8 +613,8 @@ export async function addShuttleAcademyStop(
         console.log(`[ShuttleOps] 🏢 Inserting Academy Stop: Branch ${branchId} (${stopType}) at Sequence ${sequenceOrder} on ${dateStr}`);
 
         const targetLocation = ACADEMY_BRANCHES[branchId];
-        const targetDate = new Date(dateStr);
-        const dayOfWeek = getDayName(targetDate);
+        // const targetDate = new Date(dateStr);
+        const dayOfWeek = getDayNameFromStr(dateStr);
 
         // 1. Shift existing sequence orders to make room
         // Note: Using a raw SQL or a more reliable update pattern if RPC is missing
