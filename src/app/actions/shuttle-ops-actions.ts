@@ -92,20 +92,40 @@ export async function getDailyShuttleData(dateStr: string): Promise<{ success: b
         // 1. It existed on that date (created_at <= end of date)
         // 2. It was not yet deleted on that date (deleted_at is null OR deleted_at > start of date)
 
-        const startOfDay = new Date(dateStr);
-        startOfDay.setHours(0, 0, 0, 0);
-        const endOfDay = new Date(dateStr);
-        endOfDay.setHours(23, 59, 59, 999);
+        // Filter schedules based on Date Validity
+        // We need robust start/end times that cover the target "dateStr" in the user's timezone (KST).
+        const [y, m, d] = dateStr.split('-').map(Number);
+
+        // Construct Start/End in UTC, then shift for safe comparison? 
+        // Actually, easiest is to ensure we cover the whole KST day.
+        // KST is UTC+9.
+        // Start: 00:00:00 KST = Previous Day 15:00:00 UTC
+        // End: 23:59:59 KST = Today 14:59:59 UTC
+
+        // Let's create these precise timestamps.
+        const startOfDay = new Date(Date.UTC(y, m - 1, d, 0, 0, 0, 0)); // 00:00 UTC
+        startOfDay.setHours(startOfDay.getHours() - 9); // Shift to 00:00 KST (Prev Day 15:00 UTC)
+
+        const endOfDay = new Date(Date.UTC(y, m - 1, d, 23, 59, 59, 999)); // 23:59 UTC
+        endOfDay.setHours(endOfDay.getHours() - 9); // Shift to 23:59 KST (Today 14:59 UTC)
+
+        // Correction: If user inserts data NOW (e.g. 12:00 UTC), and we simply use KST End (14:59 UTC), it works.
+        // But what if user inserts data at 23:00 KST (14:00 UTC)? Works.
+        // The issue was US East Server uses EST (UTC-5).
+        // new Date("2026-01-19") -> Jan 18 19:00 EST (-5) = Jan 19 00:00 UTC.
+        // endOfDay via setHours(23)... -> Jan 18 23:59 EST = Jan 19 04:59 UTC.
+        // Any record created after 05:00 UTC (14:00 KST) was hidden!
+        // With explicit KST window (ending at 14:59 UTC), current records (12:00 UTC) are included.
+
+        // HOWEVER, just to be super safe against "future" creations (e.g. created in UTC+14?), 
+        // we can just use the *entire* UTC day + buffers?
+        // But strict KST is better for a KST app.
 
         let filteredSchedules = (schedules || []).filter((s: any) => {
             const created = new Date(s.created_at);
             const deleted = s.deleted_at ? new Date(s.deleted_at) : null;
 
-            // Allow created on the same day (ignoring time for simplicity or strict?)
-            // If created today, it should appear today.
-            if (created > endOfDay) return false; // Created in future relative to view date
-
-            // If deleted before today began, it shouldn't appear
+            if (created > endOfDay) return false;
             if (deleted && deleted < startOfDay) return false;
 
             return true;
