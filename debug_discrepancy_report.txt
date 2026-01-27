@@ -1,0 +1,75 @@
+--- DEBUG REPORT ---
+1. Student Existence Check:
+   Found: 25 / 18
+   Missing from DB: 권희윤
+
+2. Schedule Check for Found Students (95 records):
+   - 탁경일: Total 6 schedules.
+     -> [Mon] 12:45:00 (dropoff) (ACTIVE)
+     -> [Mon] 10:35:00 (boarding) (ACTIVE)
+   - 김대후: Total 10 schedules.
+     -> [Mon] 10:47:00 (boarding) (ACTIVE)
+     -> [Mon] 12:30:00 (dropoff) (ACTIVE)
+   - 신민주: Total 4 schedules.
+     -> [Mon] 10:50:00 (boarding) (ACTIVE)
+     -> [Mon] 12:35:00 (dropoff) (ACTIVE)
+   - 오예현: Total 6 schedules.
+     -> [Mon] 11:10:00 (dropoff) (ACTIVE)
+     -> [Mon] 09:25:00 (boarding) (ACTIVE)
+   - 정재후: Total 4 schedules.
+     -> [Mon] 12:32:00 (dropoff) (ACTIVE)
+     -> [Mon] 10:45:00 (boarding) (ACTIVE)
+   - 임성우: Total 4 schedules.
+     -> [Mon] 11:05:00 (dropoff) (ACTIVE)
+     -> [Mon] 09:20:00 (boarding) (ACTIVE)
+   - 오예현: Total 1 schedules.
+     -> [Mon] 11:10:00 (dropoff) (ACTIVE)
+   - 이진우: Total 1 schedules.
+     -> NO MONDAY SCHEDULES FOUND.
+   - 권오현: Total 4 schedules.
+     -> [Mon] 11:25:00 (dropoff) (ACTIVE)
+     -> [Mon] 09:12:00 (boarding) (ACTIVE)
+   - 윤서한: Total 1 schedules.
+     -> NO MONDAY SCHEDULES FOUND.
+   - 김선우: Total 6 schedules.
+     -> [Mon] 11:23:00 (dropoff) (ACTIVE)
+     -> [Mon] 09:10:00 (boarding) (ACTIVE)
+   - 윤이한: Total 1 schedules.
+     -> NO MONDAY SCHEDULES FOUND.
+   - 박준수: Total 1 schedules.
+     -> NO MONDAY SCHEDULES FOUND.
+   - 강하랑: Total 4 schedules.
+     -> [Mon] 10:40:00 (boarding) (ACTIVE)
+     -> [Mon] 12:40:00 (dropoff) (ACTIVE)
+   - 정재후: Total 1 schedules.
+     -> NO MONDAY SCHEDULES FOUND.
+   - 나유찬: Total 1 schedules.
+     -> NO MONDAY SCHEDULES FOUND.
+   - 김수아: Total 2 schedules.
+     -> [Mon] 09:10:00 (boarding) (ACTIVE)
+     -> [Mon] 11:23:00 (dropoff) (ACTIVE)
+   - 이도경: Total 1 schedules.
+     -> NO MONDAY SCHEDULES FOUND.
+   - 이도경: Total 4 schedules.
+     -> [Mon] 12:15:00 (dropoff) (ACTIVE)
+     -> [Mon] 10:23:00 (boarding) (ACTIVE)
+   - 박준수: Total 6 schedules.
+     -> [Mon] 11:58:00 (dropoff) (DELETED: 2026-01-23T06:37:38.456+00:00)
+     -> [Mon] 10:05:00 (boarding) (DELETED: 2026-01-23T06:37:38.456+00:00)
+   - 나유찬: Total 7 schedules.
+     -> [Mon] 11:07:00 (dropoff) (ACTIVE)
+     -> [Mon] 09:22:00 (boarding) (ACTIVE)
+   - 박준서: Total 6 schedules.
+     -> [Mon] 11:58:00 (dropoff) (ACTIVE)
+     -> [Mon] 10:05:00 (boarding) (ACTIVE)
+   - 윤서한: Total 4 schedules.
+     -> [Mon] 12:08:00 (dropoff) (DELETED: 2026-01-23T06:37:38.456+00:00)
+     -> [Mon] 10:15:00 (boarding) (DELETED: 2026-01-23T06:37:38.456+00:00)
+   - 이진우: Total 6 schedules.
+     -> [Mon] 10:20:00 (boarding) (ACTIVE)
+     -> [Mon] 12:15:00 (dropoff) (ACTIVE)
+   - 윤이한: Total 4 schedules.
+     -> [Mon] 10:15:00 (boarding) (ACTIVE)
+     -> [Mon] 12:08:00 (dropoff) (ACTIVE)
+
+3. Total Active Monday Schedules in DB: 44

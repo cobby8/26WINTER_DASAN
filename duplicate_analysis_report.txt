@@ -1,0 +1,61 @@
+--- DUPLICATE ANALYSIS REPORT ---
+
+[1. Duplicate Students by Name]
+- 이진우: 2 records
+   ID: f62b34e7-855f-4a04-8739-2795ecaabc58 (Created: 2026-01-22T05:33:41.560264+00:00)
+   ID: b060520f-2d2d-4693-90fd-6df0d90649f4 (Created: 2025-12-31T16:31:31.051336+00:00)
+- 오예현: 2 records
+   ID: 25943087-98d3-4c9d-b892-354797165cc8 (Created: 2025-12-31T16:31:59.335027+00:00)
+   ID: 13f1c45f-5a28-490c-8cc7-e75d70ec14e2 (Created: 2026-01-23T06:37:04.845742+00:00)
+- 정재후: 2 records
+   ID: 62234186-013c-4eb1-b6f1-275719ac3e33 (Created: 2025-12-31T16:32:04.774574+00:00)
+   ID: 97d45196-d365-4531-80f9-4e8910b6e988 (Created: 2026-01-20T02:31:53.33879+00:00)
+- 류호준: 2 records
+   ID: 0fa9ba3f-285f-4c46-8aa9-cf6c720a9bc4 (Created: 2026-01-25T20:01:20.166416+00:00)
+   ID: b3685f7c-1b2a-453b-84ab-08f11d93b255 (Created: 2025-12-31T16:31:35.91663+00:00)
+- 윤서한: 2 records
+   ID: d418bd55-6ce8-49fd-83be-a9c5618c7c0a (Created: 2026-01-23T05:34:34.272677+00:00)
+   ID: ac0c1f11-ac33-4170-8c67-0b8ef20b92d0 (Created: 2026-01-03T19:36:39.50923+00:00)
+- 윤이한: 2 records
+   ID: 59b18f2c-9548-4df0-8305-0c839ce2ae84 (Created: 2026-01-23T05:34:34.271227+00:00)
+   ID: 7fb1886f-7283-49ed-83f8-5024fb200538 (Created: 2026-01-03T19:36:38.243774+00:00)
+- 박준수: 2 records
+   ID: 2a45de71-e5d2-4306-aa63-f1363ce8e454 (Created: 2026-01-23T05:34:34.271228+00:00)
+   ID: 3250b268-3d62-4b9b-94f6-cb40ac20bbed (Created: 2025-12-31T16:31:27.689044+00:00)
+- 조윤우: 2 records
+   ID: 14926296-11d2-4ace-8f4a-361640009c86 (Created: 2026-01-05T11:36:57.635336+00:00)
+   ID: 939fb99f-99b1-45b2-93a0-fa4f73c2e579 (Created: 2026-01-11T13:53:09.116439+00:00)
+- 상윤호: 2 records
+   ID: 47b36269-394c-41fc-9518-fdee823202aa (Created: 2026-01-13T05:08:55.276494+00:00)
+   ID: 0aa2ad88-c0aa-4c50-8b71-e770f8ec0eff (Created: 2026-01-24T05:36:33.560294+00:00)
+- 나유찬: 2 records
+   ID: d129060a-3ca7-49be-8cc1-44451cfd9dcf (Created: 2026-01-20T02:31:53.333077+00:00)
+   ID: a327c44d-4c9e-437d-836c-45780a5183bc (Created: 2025-12-31T16:32:14.509825+00:00)
+- 정재율: 2 records
+   ID: 3f935c56-01c9-4149-8c58-f4966370e67c (Created: 2026-01-12T11:32:42.999913+00:00)
+   ID: fde3a1ac-f229-46dd-ae2a-4b08c3cf3a93 (Created: 2026-01-24T05:36:33.558782+00:00)
+- 이도경: 2 records
+   ID: aa603faf-b380-4d97-9526-06bbf416a3b5 (Created: 2026-01-22T05:33:41.559424+00:00)
+   ID: 8b26ae34-aa01-44bb-9a8a-904013922c79 (Created: 2026-01-03T19:36:42.050467+00:00)
+
+[2. Duplicate Schedules (Same ID)] (Total Active: 431)
+- [류민결] Wed 11:20:00 (dropoff): 96 copies
+- [류민결] Wed 11:15:00 (dropoff): 91 copies
+- [류호준] Fri 10:08:00 (boarding): 2 copies
+- [류호준] Fri 11:50:00 (dropoff): 2 copies
+- [나유찬] Wed 11:10:00 (dropoff): 2 copies
+Found 188 excess duplicate schedule rows.
+
+[3. Logical Duplicates (Same Name, Diff ID)]
+- 상윤호-Wed-11:20:00-dropoff: Exists for 2 different Student IDs (47b36269-394c-41fc-9518-fdee823202aa, 0aa2ad88-c0aa-4c50-8b71-e770f8ec0eff)
+- 류호준-Wed-12:00:00-dropoff: Exists for 2 different Student IDs (b3685f7c-1b2a-453b-84ab-08f11d93b255, 0fa9ba3f-285f-4c46-8aa9-cf6c720a9bc4)
+- 오예현-Mon-11:10:00-dropoff: Exists for 2 different Student IDs (25943087-98d3-4c9d-b892-354797165cc8, 13f1c45f-5a28-490c-8cc7-e75d70ec14e2)
+- 나유찬-Wed-11:10:00-dropoff: Exists for 2 different Student IDs (a327c44d-4c9e-437d-836c-45780a5183bc, d129060a-3ca7-49be-8cc1-44451cfd9dcf)
+- 정재후-Wed-10:50:00-boarding: Exists for 2 different Student IDs (62234186-013c-4eb1-b6f1-275719ac3e33, 97d45196-d365-4531-80f9-4e8910b6e988)
+- 박준수-Wed-12:20:00-dropoff: Exists for 2 different Student IDs (3250b268-3d62-4b9b-94f6-cb40ac20bbed, 2a45de71-e5d2-4306-aa63-f1363ce8e454)
+- 윤이한-Wed-12:10:00-dropoff: Exists for 2 different Student IDs (7fb1886f-7283-49ed-83f8-5024fb200538, 59b18f2c-9548-4df0-8305-0c839ce2ae84)
+- 윤서한-Wed-12:10:00-dropoff: Exists for 2 different Student IDs (ac0c1f11-ac33-4170-8c67-0b8ef20b92d0, d418bd55-6ce8-49fd-83be-a9c5618c7c0a)
+- 정재율-Tue-15:05:00-dropoff: Exists for 2 different Student IDs (3f935c56-01c9-4149-8c58-f4966370e67c, fde3a1ac-f229-46dd-ae2a-4b08c3cf3a93)
+- 이진우-Wed-12:05:00-dropoff: Exists for 2 different Student IDs (b060520f-2d2d-4693-90fd-6df0d90649f4, f62b34e7-855f-4a04-8739-2795ecaabc58)
+- 이도경-Wed-12:00:00-dropoff: Exists for 2 different Student IDs (8b26ae34-aa01-44bb-9a8a-904013922c79, aa603faf-b380-4d97-9526-06bbf416a3b5)
+Found 11 logical duplicates.

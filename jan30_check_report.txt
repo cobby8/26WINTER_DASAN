@@ -1,0 +1,70 @@
+--- JAN 30 (FRI) STATUS REPORT ---
+
+[1. Active Schedules] (Total: 54)
+09:00:00 - System (academy_start)
+09:05:00 - 류민결 (boarding)
+09:10:00 - 상윤호 (boarding)
+09:10:00 - 권회윤 (boarding)
+09:13:00 - 김도운 (boarding)
+09:20:00 - 나유찬 (boarding)
+09:22:00 - 오예현 (boarding)
+09:27:00 - System (academy_end)
+09:32:00 - System (academy_start)
+09:50:00 - 김남준 (boarding)
+09:50:00 - 이가은 (boarding)
+09:50:00 - 이유건 (boarding)
+09:50:00 - 정주언 (boarding)
+09:50:00 - 윤지우 (boarding)
+09:50:00 - 송지안 (boarding)
+09:50:00 - 류이준 (boarding)
+10:05:00 - 이진우 (boarding)
+10:08:00 - 류호준 (boarding)
+10:13:00 - System (academy_end)
+10:20:00 - System (academy_start)
+10:30:00 - 탁경일 (boarding)
+10:35:00 - 강하랑 (boarding)
+10:40:00 - 박준수 (boarding)
+10:40:00 - 박준서 (boarding)
+10:45:00 - 신민주 (boarding)
+10:47:00 - 김대후 (boarding)
+10:50:00 - System (academy_end)
+10:55:00 - System (academy_start)
+11:00:00 - 나유찬 (dropoff)
+11:02:00 - 오예현 (dropoff)
+11:10:00 - 김도운 (dropoff)
+11:13:00 - 상윤호 (dropoff)
+11:13:00 - 권회윤 (dropoff)
+11:13:00 - 윤승섭 (dropoff)
+11:18:00 - System (academy_end)
+11:40:00 - System (academy_start)
+11:50:00 - 류호준 (dropoff)
+11:55:00 - 이진우 (dropoff)
+12:10:00 - 류이준 (dropoff)
+12:10:00 - 김남준 (dropoff)
+12:10:00 - 이가은 (dropoff)
+12:10:00 - 윤지우 (dropoff)
+12:10:00 - 이유건 (dropoff)
+12:10:00 - 송지안 (dropoff)
+12:10:00 - 정주언 (dropoff)
+12:25:00 - System (academy_end)
+12:26:00 - System (academy_start)
+12:30:00 - 박준수 (dropoff)
+12:30:00 - 박준서 (dropoff)
+12:35:00 - 신민주 (dropoff)
+12:37:00 - 김대후 (dropoff)
+12:42:00 - 강하랑 (dropoff)
+12:47:00 - 탁경일 (dropoff)
+12:50:00 - System (academy_end)
+
+[2. Deleted/Hidden Schedules] (Total: 0)
+
+[3. Key Student Status]
+- 류민결: Found 1 student record(s).
+  -> 09:05:00 (boarding) is ACTIVE
+- 권희윤: NOT FOUND in Student DB.
+- 김도운: Found 1 student record(s).
+  -> 11:10:00 (dropoff) is ACTIVE
+  -> 09:13:00 (boarding) is ACTIVE
+- 김남준: Found 1 student record(s).
+  -> 12:10:00 (dropoff) is ACTIVE
+  -> 09:50:00 (boarding) is ACTIVE
