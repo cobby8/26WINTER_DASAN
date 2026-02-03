@@ -12,6 +12,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Loader2, Save, ArrowLeft, RefreshCw, Check, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 interface ClassData {
     id: string;
@@ -23,6 +30,9 @@ interface ClassData {
     tuition: number;
     start_date?: string;
     end_date?: string;
+    registeredCount: number; // New field
+    branch?: string; // For filtering
+    session?: string; // For filtering
 }
 
 export default function BulkEditClassesPage() {
@@ -32,19 +42,38 @@ export default function BulkEditClassesPage() {
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
 
+    // Filter States
+    const [filterBranch, setFilterBranch] = useState<string>('all');
+    const [filterSession, setFilterSession] = useState<string>('all');
+    const [filterDay, setFilterDay] = useState<string>('all');
+    const [searchName, setSearchName] = useState<string>('');
+
     // Selection state
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
     // Bulk Input States
     const [bulkStartTime, setBulkStartTime] = useState('');
-    const [bulkDuration, setBulkDuration] = useState(''); // Default empty to allow independent updates
+    const [bulkDuration, setBulkDuration] = useState('');
     const [bulkCapacity, setBulkCapacity] = useState('');
     const [bulkTuition, setBulkTuition] = useState('');
     const [bulkStartDate, setBulkStartDate] = useState('');
     const [bulkEndDate, setBulkEndDate] = useState('');
 
-    // Tracking modified rows for validation/saving
     const [modifiedIds, setModifiedIds] = useState<Set<string>>(new Set());
+
+    // Derived values for filters
+    const uniqueBranches = Array.from(new Set(classes.map(c => c.branch).filter(Boolean))).sort();
+    const uniqueSessions = Array.from(new Set(classes.map(c => c.session).filter(Boolean))).sort();
+    const days = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];
+
+    // Filter Logic
+    const filteredClasses = classes.filter(cls => {
+        if (filterBranch !== 'all' && cls.branch !== filterBranch) return false;
+        if (filterSession !== 'all' && cls.session !== filterSession) return false;
+        if (filterDay !== 'all' && cls.day_of_week !== filterDay) return false;
+        if (searchName && !cls.name.toLowerCase().includes(searchName.toLowerCase())) return false;
+        return true;
+    });
 
     useEffect(() => {
         fetchClasses();
@@ -52,31 +81,51 @@ export default function BulkEditClassesPage() {
 
     const fetchClasses = async () => {
         setLoading(true);
-        const { data, error } = await supabase
+
+        // 1. Fetch Classes
+        const { data: classData, error: classError } = await supabase
             .from('classes')
             .select('*')
             .is('deleted_at', null)
             .order('day_of_week')
             .order('start_time');
 
-        if (error) {
-            console.error('Error fetching classes:', error);
+        if (classError) {
+            console.error('Error fetching classes:', classError);
             alert('수업 정보를 불러오지 못했습니다.');
-        } else {
-            const safeData = data?.map(c => ({
-                ...c,
-                tuition: c.tuition || 0,
-                start_date: c.start_date || '',
-                end_date: c.end_date || ''
-            })) || [];
-            setClasses(safeData);
+            setLoading(false);
+            return;
         }
+
+        // 2. Fetch Enrollments for Counts
+        const { data: enrollments, error: enrollError } = await supabase
+            .from('enrollments')
+            .select('class_id')
+            .eq('status', 'active');
+
+        const counts: { [key: string]: number } = {};
+        if (enrollments) {
+            enrollments.forEach(e => {
+                counts[e.class_id] = (counts[e.class_id] || 0) + 1;
+            });
+        }
+
+        const safeData = classData?.map(c => ({
+            ...c,
+            tuition: c.tuition || 0,
+            start_date: c.start_date || '',
+            end_date: c.end_date || '',
+            registeredCount: counts[c.id] || 0
+        })) || [];
+
+        setClasses(safeData);
         setLoading(false);
     };
 
     const handleSelectAll = (checked: boolean) => {
         if (checked) {
-            setSelectedIds(new Set(classes.map(c => c.id)));
+            // Select only filtered classes
+            setSelectedIds(new Set(filteredClasses.map(c => c.id)));
         } else {
             setSelectedIds(new Set());
         }
@@ -91,16 +140,11 @@ export default function BulkEditClassesPage() {
 
     const calculateEndTime = (start: string, durationMin: string) => {
         if (!start || !durationMin) return '';
-
-        // Handle HH:MM:SS (from DB) or HH:MM (from input)
-        // Ensure we only look at the refined HH:MM part
         const timeStr = start.length > 5 ? start.substring(0, 5) : start;
         const [h, m] = timeStr.split(':').map(Number);
-
         const totalMin = h * 60 + m + parseInt(durationMin);
         const endH = Math.floor(totalMin / 60) % 24;
         const endM = totalMin % 60;
-
         return `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`;
     };
 
@@ -118,26 +162,18 @@ export default function BulkEditClassesPage() {
                 let hasChanges = false;
                 const newItem = { ...c };
 
-                // 1. Update Start Time
                 if (bulkStartTime) {
                     newItem.start_time = bulkStartTime;
                     hasChanges = true;
                 }
-
-                // 2. Update End Time (Duration)
-                // If bulkDuration is set, calculate new end time
-                // Use new start_time if we just updated it, otherwise use existing start_time
                 if (bulkDuration) {
                     const baseTime = bulkStartTime || c.start_time;
                     const newEnd = calculateEndTime(baseTime, bulkDuration);
-
                     if (newEnd && newEnd !== c.end_time) {
                         newItem.end_time = newEnd;
                         hasChanges = true;
                     }
                 }
-
-                // 3. Update Capacity
                 if (bulkCapacity) {
                     const val = parseInt(bulkCapacity);
                     if (!isNaN(val) && val !== c.capacity) {
@@ -145,8 +181,6 @@ export default function BulkEditClassesPage() {
                         hasChanges = true;
                     }
                 }
-
-                // 4. Update Tuition
                 if (bulkTuition) {
                     const val = parseInt(bulkTuition);
                     if (!isNaN(val) && val !== c.tuition) {
@@ -154,8 +188,6 @@ export default function BulkEditClassesPage() {
                         hasChanges = true;
                     }
                 }
-
-                // 5. Update Dates
                 if (bulkStartDate) {
                     newItem.start_date = bulkStartDate;
                     hasChanges = true;
@@ -293,7 +325,7 @@ export default function BulkEditClassesPage() {
                         className="mr-2"
                     >
                         {deleting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
-                        선택 삭제 (수강생 포함)
+                        선택 삭제
                     </Button>
                     <Button onClick={handleSave} disabled={saving || modifiedIds.size === 0} className="bg-blue-600 hover:bg-blue-700">
                         {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
@@ -302,7 +334,64 @@ export default function BulkEditClassesPage() {
                 </div>
             </div>
 
-            {/* Default Control Panel */}
+            {/* Filters */}
+            <div className="flex flex-wrap gap-3 p-4 bg-gray-50 rounded-lg border">
+                <div className="w-[150px]">
+                    <Select value={filterBranch} onValueChange={setFilterBranch}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="지점 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">모든 지점</SelectItem>
+                            {uniqueBranches.map(b => (
+                                <SelectItem key={b as string} value={b as string}>{b}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className="w-[150px]">
+                    <Select value={filterSession} onValueChange={setFilterSession}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="차수 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">모든 차수</SelectItem>
+                            {uniqueSessions.map(s => (
+                                <SelectItem key={s as string} value={s as string}>{s}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className="w-[150px]">
+                    <Select value={filterDay} onValueChange={setFilterDay}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="요일 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">모든 요일</SelectItem>
+                            {days.map(d => (
+                                <SelectItem key={d} value={d}>{d}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className="flex-1 min-w-[200px]">
+                    <Input
+                        placeholder="강좌명 검색..."
+                        value={searchName}
+                        onChange={(e) => setSearchName(e.target.value)}
+                    />
+                </div>
+
+                <div className="flex items-center text-sm text-gray-500">
+                    {filteredClasses.length}개 / 전체 {classes.length}개
+                </div>
+            </div>
+
+            {/* Control Panel */}
             <div className="bg-gray-100 p-4 rounded-lg border space-y-4">
                 <div className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
                     <RefreshCw className="w-4 h-4" />
@@ -374,39 +463,63 @@ export default function BulkEditClassesPage() {
                         <TableRow>
                             <TableHead className="w-[50px]">
                                 <Checkbox
-                                    checked={selectedIds.size === classes.length && classes.length > 0}
+                                    checked={selectedIds.size === filteredClasses.length && filteredClasses.length > 0}
                                     onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
                                 />
                             </TableHead>
                             <TableHead className="w-[80px]">요일</TableHead>
+                            <TableHead className="w-[80px]">분반</TableHead>
                             <TableHead className="w-[200px]">강좌명</TableHead>
-                            <TableHead className="w-[120px]">시작</TableHead>
-                            <TableHead className="w-[120px]">종료</TableHead>
-                            <TableHead className="w-[80px]">정원</TableHead>
+                            <TableHead className="w-[100px] text-right">등록/정원</TableHead>
+                            <TableHead className="w-[100px]">시작</TableHead>
+                            <TableHead className="w-[100px]">종료</TableHead>
                             <TableHead className="w-[100px]">수업료</TableHead>
                             <TableHead className="w-[110px]">시작일</TableHead>
                             <TableHead className="w-[110px]">종료일</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {classes.map((cls) => (
-                            <TableRow key={cls.id} className={modifiedIds.has(cls.id) ? "bg-blue-50" : ""}>
-                                <TableCell>
-                                    <Checkbox
-                                        checked={selectedIds.has(cls.id)}
-                                        onCheckedChange={(checked) => handleSelectRow(cls.id, checked as boolean)}
-                                    />
+                        {filteredClasses.length > 0 ? (
+                            filteredClasses.map((cls) => (
+                                <TableRow key={cls.id} className={modifiedIds.has(cls.id) ? "bg-blue-50" : ""}>
+                                    <TableCell>
+                                        <Checkbox
+                                            checked={selectedIds.has(cls.id)}
+                                            onCheckedChange={(checked) => handleSelectRow(cls.id, checked as boolean)}
+                                        />
+                                    </TableCell>
+                                    <TableCell className="font-medium text-gray-500">{cls.day_of_week}</TableCell>
+                                    <TableCell className="text-xs">
+                                        {(cls.branch || cls.session) ? (
+                                            <div className="flex flex-col gap-1">
+                                                {cls.branch && <span className="bg-blue-100 text-blue-700 px-1 rounded text-center">{cls.branch}</span>}
+                                                {cls.session && <span className="bg-purple-100 text-purple-700 px-1 rounded text-center">{cls.session}</span>}
+                                            </div>
+                                        ) : '-'}
+                                    </TableCell>
+                                    <TableCell className="text-gray-500 text-sm">{cls.name}</TableCell>
+                                    {/* Registered / Capacity */}
+                                    <TableCell className="text-right">
+                                        <span className={`font-bold ${cls.registeredCount >= cls.capacity ? 'text-red-500' : 'text-green-600'}`}>
+                                            {cls.registeredCount}
+                                        </span>
+                                        <span className="text-gray-400 mx-1">/</span>
+                                        <span className="text-gray-600">{cls.capacity}</span>
+                                    </TableCell>
+                                    <TableCell>{cls.start_time}</TableCell>
+                                    <TableCell>{cls.end_time}</TableCell>
+                                    <TableCell>{formatCurrency(cls.tuition)}원</TableCell>
+                                    <TableCell className="text-xs">{cls.start_date || '-'}</TableCell>
+                                    <TableCell className="text-xs">{cls.end_date || '-'}</TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={10} className="h-24 text-center text-gray-500">
+                                    검색 결과가 없습니다.
                                 </TableCell>
-                                <TableCell className="font-medium text-gray-500">{cls.day_of_week}</TableCell>
-                                <TableCell className="text-gray-500 text-sm">{cls.name}</TableCell>
-                                <TableCell>{cls.start_time}</TableCell>
-                                <TableCell>{cls.end_time}</TableCell>
-                                <TableCell>{cls.capacity}</TableCell>
-                                <TableCell>{formatCurrency(cls.tuition)}원</TableCell>
-                                <TableCell className="text-xs">{cls.start_date || '-'}</TableCell>
-                                <TableCell className="text-xs">{cls.end_date || '-'}</TableCell>
                             </TableRow>
-                        ))}
+                        )}
                     </TableBody>
                 </Table>
             </div>

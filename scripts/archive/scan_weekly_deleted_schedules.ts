@@ -66,7 +66,7 @@ async function scanWeeklyDeleted() {
             console.log(`Students affected: ${uniqueNames.join(', ')}`);
 
             items.forEach(item => {
-                const studentName = item.students?.name || 'Unknown/System';
+                const studentName = (item.students as any)?.name || 'Unknown/System';
                 report += `  - ${item.time} (${item.type}): ${studentName} (Deleted: ${item.deleted_at})\n`;
             });
             totalFound += items.length;

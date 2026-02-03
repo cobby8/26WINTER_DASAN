@@ -1,0 +1,3 @@
+[Missing] Row 16: 박모건 / Mon / 10:45:00 / boarding
+[Missing] Row 99: 류민결 / Wed / 11:20:00 / dropoff
+[Missing] Row 138: 권도협 / Thu / 13:15:00 / boarding

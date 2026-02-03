@@ -9,7 +9,7 @@ export default async function StudentsPage() {
     const { data: students, error } = await supabaseAdmin
         .from('students')
         .select('*, shuttle_schedules(*)')
-        .neq('status', 'deleted')
+        .is('deleted_at', null)
         .order('name');
 
     if (error) {

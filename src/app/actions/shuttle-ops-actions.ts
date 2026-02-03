@@ -1,6 +1,6 @@
 'use server';
 
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 import { revalidatePath } from 'next/cache';
 
 export type ShuttleStatus = 'pending' | 'boarded' | 'dropped_off' | 'missed' | 'self_commute';
@@ -132,7 +132,8 @@ export async function getDailyShuttleData(dateStr: string): Promise<{ success: b
         });
 
         // 1.5 Filter by Class Period (Phase 6)
-        // Only show students who have at least one active class covering this date.
+        // DISABLED for now to ensure 2nd session visibility even if enrollment link is missing.
+        /*
         const studentIds = filteredSchedules.map((s: any) => s.student_id).filter((id: any) => id);
 
         if (studentIds.length > 0) {
@@ -177,6 +178,7 @@ export async function getDailyShuttleData(dateStr: string): Promise<{ success: b
 
             console.log(`[ShuttleOps] Filtered ${schedules?.length} -> ${filteredSchedules.length} items based on Class Period`);
         }
+        */
 
         if (filteredSchedules.length === 0) {
             return { success: true, data: [] };

@@ -1,18 +1,11 @@
-
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { RepairDataButton } from './repair-button';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
+import ClassList from './class-list';
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function ClassesPage() {
@@ -21,6 +14,23 @@ export default async function ClassesPage() {
         .from('classes')
         .select('*')
         .is('deleted_at', null);
+
+
+
+    // const classes: any[] = [
+    //     { id: '1', name: 'DEBUG_CLASS_TEST', branch: '1호점', day_of_week: '월요일', start_time: '10:00', end_time: '11:00', session: '1차', capacity: 10 }
+    // ];
+    // const error: any = null;
+
+    console.log('--- DEBUG: Classes Page Fetch ---');
+    if (classes && classes.length > 0) {
+        console.log(`Fetched ${classes.length} classes.`);
+        console.log(`First Class Name from DB: ${classes[0].name}`);
+        const target = classes.find(c => c.name.includes('2호점'));
+        if (target) console.log(`Sample Target Class: ${target.name}`);
+    } else {
+        console.log('No classes or error:', error);
+    }
 
     if (error) {
         return <div className="p-4 text-red-500">Error loading classes: {error.message}</div>;
@@ -81,72 +91,7 @@ export default async function ClassesPage() {
                 </div>
             </div>
 
-            <div className="rounded-md border">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-[100px]">지점/분반</TableHead>
-                            <TableHead>요일</TableHead>
-                            <TableHead>시간</TableHead>
-                            <TableHead>강좌명</TableHead>
-                            <TableHead className="text-right">등록/정원</TableHead>
-                            <TableHead className="w-[100px] text-right">관리</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {sortedClasses && sortedClasses.length > 0 ? (
-                            sortedClasses.map((cls) => (
-                                <TableRow key={cls.id}>
-                                    <TableCell>
-                                        {(cls.branch || cls.session) ? (
-                                            <div className="flex gap-1">
-                                                {cls.branch && <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-bold">{cls.branch}</span>}
-                                                {cls.session && <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-bold">{cls.session}</span>}
-                                            </div>
-                                        ) : '-'}
-                                    </TableCell>
-                                    <TableCell className="font-medium">{cls.day_of_week}</TableCell>
-                                    <TableCell>
-                                        <div className="flex flex-col text-xs text-gray-500">
-                                            <span>{cls.start_time} ~ {cls.end_time}</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="font-medium">
-                                        {cls.name}
-                                        {/* Class Period Indicator */}
-                                        {cls.start_date && (
-                                            <div className="text-[10px] text-gray-400 mt-0.5">
-                                                {cls.start_date} ~ {cls.end_date}
-                                            </div>
-                                        )}
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <span className={`font-bold ${(enrollmentCounts[cls.id] || 0) >= cls.capacity
-                                            ? 'text-red-500'
-                                            : 'text-green-600'
-                                            }`}>
-                                            {enrollmentCounts[cls.id] || 0}
-                                        </span>
-                                        <span className="text-gray-400 mx-1">/</span>
-                                        <span className="text-gray-600">{cls.capacity}</span>
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <Button variant="ghost" size="sm" asChild>
-                                            <Link href={`/admin/classes/${cls.id}`}>수정</Link>
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={6} className="h-24 text-center">
-                                    등록된 수업이 없습니다.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
+            <ClassList initialClasses={sortedClasses} enrollmentCounts={enrollmentCounts} />
         </div>
     );
 }

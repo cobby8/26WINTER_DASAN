@@ -1,4 +1,4 @@
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 import { format, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import AttendanceList from '@/components/attendance/AttendanceList';

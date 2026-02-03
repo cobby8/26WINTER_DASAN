@@ -1,24 +1,17 @@
-import dotenv from 'dotenv';
-import path from 'path';
 
-// Load env explicitly before other imports
-dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
-
-// Now import SyncService
 import { SyncService } from '../src/lib/syncService';
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
 
 async function runSync() {
-    console.log('🔄 Starting Manual Sync...');
-    const service = new SyncService();
+    console.log('--- Triggering Sync via Script ---');
     try {
+        const service = new SyncService();
         const result = await service.syncData();
-        console.log('✅ Sync Complete!');
-        console.log(`Processed: ${result.processedCount}`);
-        if (result.errors.length > 0) {
-            console.log('⚠️ Errors:', result.errors);
-        }
-    } catch (error) {
-        console.error('❌ Sync Failed:', error);
+        console.log('Sync Result:', JSON.stringify(result, null, 2));
+    } catch (e: any) {
+        console.error('Sync Error:', e.message);
+        console.error(e.stack);
     }
 }
 

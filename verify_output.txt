@@ -1,0 +1,13 @@
+
+--- Verify Student '강인규' ---
+Total Count (incl. deleted): 2
+Active Count: 1
+ID: 98989834-6d1b-43ca-b133-8bca2b95a95b, Name: 강인규, Deleted: null
+ID: a75cee4c-0bec-4dd9-8659-0e0e63b2101b, Name: 강인규, Deleted: 2026-01-31T14:04:32.861+00:00
+
+--- Verify Class Names (Sample) ---
+2호점 3교시(중등) 13:30~14:50
+2호점 2교시(초등저) 11:00~12:20
+2호점 1교시(초등고) 09:30~10:50
+2호점 2교시(초등저) 11:00~12:20
+2호점 3교시(중등) 13:30~14:50

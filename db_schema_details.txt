@@ -1,0 +1,24 @@
+--- STUDENT KEYS START ---
+address
+birth_date
+created_at
+deleted_at
+gender
+grade
+id
+name
+note
+parent_name
+parent_phone
+registration_source
+school
+shuttle_route
+status
+student_phone
+updated_at
+--- STUDENT KEYS END ---
+--- CLASS NAMES START ---
+[1차/1호점] 겨울방학특강 월요일 10:00 (1호점 1교시(초등저) 10:00~11:20)
+[1차/1호점] 겨울방학특강 수요일 10:00 (1호점 1교시(초등저) 10:00~11:20)
+[1차/2호점] 겨울방학특강 월요일 09:30 (2호점 1교시(초등고) 09:30~10:50)
+--- CLASS NAMES END ---

@@ -1,0 +1,167 @@
+=== 2nd Session Cleanup Analysis ===
+
+Total Classes: 105
+Classes with enrollments: 45
+Classes with NO enrollments: 60
+
+
+=== Duplicate Groups: 15 ===
+
+"[2차/1호점] 겨울방학특강 금요일 10:30" (금요일 10:30:00):
+  - ID: 66effa64-94a6-4829-b968-012aa1c9f0c8 | Enrollments: 0/10
+  - ID: c99e8ed9-5051-45d5-a82e-a46af23523fb | Enrollments: 0/10
+  - ID: 5c18f8de-6b54-42a1-b907-2ec298c23106 | Enrollments: 10/10
+  - ID: d30aec97-1e3c-43b1-be1e-75278271ef02 | Enrollments: 0/10
+  - ID: d403e42b-0a24-4a1c-884c-defb4a8e5bae | Enrollments: 10/10
+  - ID: 8b4a3478-fbe8-4f5f-ad03-3cc2323d6b35 | Enrollments: 0/10
+  - ID: 45a5d0a1-d833-4c32-a048-c7c2383ac283 | Enrollments: 10/10
+
+"[2차/1호점] 겨울방학특강 수요일 10:30" (수요일 10:30:00):
+  - ID: 96c8708f-dba1-4dc9-80e2-54a7fe31f364 | Enrollments: 6/10
+  - ID: eb9bacb6-ce2d-4844-9652-41f74fd3a4aa | Enrollments: 0/10
+  - ID: 1cfa6129-742c-49ac-bf7c-df132463f46e | Enrollments: 6/10
+  - ID: 074b8d69-9b88-4ff8-9f70-f35fe444fdda | Enrollments: 0/10
+  - ID: 02a82451-ef74-43fc-8989-5cfa32d7067a | Enrollments: 6/10
+  - ID: 5accd68c-a65d-4eb8-9207-ccf56b3578b3 | Enrollments: 0/10
+  - ID: 00032eac-0645-4f48-bdc5-3763a8e3b8ea | Enrollments: 0/10
+
+"[2차/1호점] 겨울방학특강 월요일 10:30" (월요일 10:30:00):
+  - ID: 68241f7e-12cd-4f85-a6e4-ae0d38f5969e | Enrollments: 0/10
+  - ID: 292d47f4-a16f-45c4-aac5-87245e52d670 | Enrollments: 0/10
+  - ID: e35b7797-8bf1-49a9-b448-9157f7064b61 | Enrollments: 6/10
+  - ID: 42f511e6-4abb-4d60-bdc1-f98a2893f47b | Enrollments: 0/10
+  - ID: c8c2b5f1-9cb3-437e-9a0e-21501d182865 | Enrollments: 6/10
+  - ID: 08d3d98d-7c2f-400e-9e0e-a10efe8af602 | Enrollments: 6/10
+  - ID: f2eb97fd-7de4-4a6c-9a6b-156504a4f64f | Enrollments: 0/10
+
+"[2차/2호점] 겨울방학특강 금요일 09:30" (금요일 09:30:00):
+  - ID: 78c55b08-d278-4388-bbd1-dcd91b261dc0 | Enrollments: 6/10
+  - ID: 1504a7fd-411c-4e6f-9657-a3ddd42621b5 | Enrollments: 0/10
+  - ID: f3bd416a-8383-4ee1-8c4a-ef72a9b54e80 | Enrollments: 0/10
+  - ID: 8ea3bce8-8cf1-462a-a0f2-14ccf5b782d2 | Enrollments: 0/10
+  - ID: 7444edf4-e3df-49aa-8824-b725be31a29c | Enrollments: 6/10
+  - ID: 2a9a5ab0-e04d-4cbc-b6d9-3ec78750c54a | Enrollments: 0/10
+  - ID: ba32552f-4609-454c-b341-32dfc5d421c8 | Enrollments: 6/10
+
+"[2차/2호점] 겨울방학특강 금요일 11:00" (금요일 11:00:00):
+  - ID: 79ea232e-d9c3-4cb8-994b-a2533f7e759d | Enrollments: 0/10
+  - ID: dd99e367-1559-45c5-9cb1-d687ea793375 | Enrollments: 7/10
+  - ID: 0c59b900-f749-4e21-ad57-928c96b15f9a | Enrollments: 0/10
+  - ID: bc6367c1-129c-4ebb-9164-72af5ddb0023 | Enrollments: 0/10
+  - ID: 9a6cdc85-ff6d-4fcb-a26c-caf44e2140a5 | Enrollments: 7/10
+  - ID: dfd8838d-c89e-4def-9b59-e4c2a1a0cc8f | Enrollments: 0/10
+  - ID: c2f674a7-2d79-48c4-9795-b270d55ee0b4 | Enrollments: 7/10
+
+"[2차/2호점] 겨울방학특강 목요일 09:30" (목요일 09:30:00):
+  - ID: 72d2c50f-2033-4308-a94a-67495cde7631 | Enrollments: 8/10
+  - ID: 000270c5-77bb-4318-aae2-01f0e6e89a95 | Enrollments: 8/10
+  - ID: 078fcb5e-0a53-4578-8f55-f83e64edc552 | Enrollments: 0/10
+  - ID: a9d6c875-646d-46a4-a2f6-9e525710bb4c | Enrollments: 0/10
+  - ID: 5058c065-f0e5-4ecb-858b-d7cd5ccd7265 | Enrollments: 0/10
+  - ID: 5136466b-7526-4ce4-aaa4-109a96e2709d | Enrollments: 8/10
+  - ID: 4d08b5f6-9fbf-4bf3-b671-b4f9819281a1 | Enrollments: 0/10
+
+"[2차/2호점] 겨울방학특강 목요일 11:00" (목요일 11:00:00):
+  - ID: c107d608-4e8e-4186-84c5-0b4e2c80684e | Enrollments: 0/10
+  - ID: 80ac351b-ba25-4345-9e05-d1561bb01316 | Enrollments: 0/10
+  - ID: 0dfabcee-5dbe-446d-9b9d-4c099c2507f7 | Enrollments: 6/10
+  - ID: 375c8baa-4e0f-4a78-9ccf-2e23c2f9f350 | Enrollments: 6/10
+  - ID: 863ef377-a65b-49fe-bcb6-2a5ef27dd3c4 | Enrollments: 0/10
+  - ID: fcb2de62-8839-4a57-bc38-f82bed627a99 | Enrollments: 6/10
+  - ID: 81350130-c566-4a0a-aa4c-60e95bfb68cd | Enrollments: 0/10
+
+"[2차/2호점] 겨울방학특강 목요일 13:30" (목요일 13:30:00):
+  - ID: 20b91d83-b803-4ab1-8d90-36be0637d9f7 | Enrollments: 9/10
+  - ID: ae2de1c5-8987-471c-b8e4-9faa4222b0ca | Enrollments: 9/10
+  - ID: 1f4f5b0c-0c58-4b6a-ada9-1e412f743aad | Enrollments: 0/10
+  - ID: ec2769fd-8c77-463c-b702-f8052e7136d0 | Enrollments: 0/10
+  - ID: 8a8088fe-6eaa-475c-afed-232331c88196 | Enrollments: 0/10
+  - ID: ca6363b2-e0a4-4b6a-8e26-74d679a9b5dc | Enrollments: 0/10
+  - ID: 79783275-0af9-4093-9e4d-c3725764628e | Enrollments: 9/10
+
+"[2차/2호점] 겨울방학특강 수요일 09:30" (수요일 09:30:00):
+  - ID: 9bd2e49c-8796-49b6-970e-a53832958b40 | Enrollments: 0/10
+  - ID: 435aa1cd-2926-4b08-8289-5494681715bb | Enrollments: 11/10
+  - ID: 2bfdb8b7-1ebf-487d-b2cc-fa5c1b0766eb | Enrollments: 0/10
+  - ID: 877f026c-f71f-479c-b868-c2f76ebcade9 | Enrollments: 0/10
+  - ID: b747545f-196c-4e7f-b002-b29f9d8f6202 | Enrollments: 0/10
+  - ID: 6306ad2a-a2a2-4960-ac49-a1f6d4cdc6e9 | Enrollments: 11/10
+  - ID: ec88bf08-df61-4d8f-b081-34547a65abaa | Enrollments: 11/10
+
+"[2차/2호점] 겨울방학특강 수요일 11:00" (수요일 11:00:00):
+  - ID: d5a82b98-ec14-4d99-9395-2ff6392dc02d | Enrollments: 0/10
+  - ID: 279f5a1a-715f-403d-9eed-1a847303db21 | Enrollments: 0/10
+  - ID: 89ace870-eb2d-4d20-9e9c-a45ae35e2aea | Enrollments: 0/10
+  - ID: 6c9fc25b-a3a1-4f3d-9337-efa64c2edeac | Enrollments: 7/10
+  - ID: 5dfc0cd9-8d70-48af-b478-67768a775497 | Enrollments: 0/10
+  - ID: b0bfcbe6-e773-40d5-a424-a01059206067 | Enrollments: 7/10
+  - ID: 83082eba-6ced-45d4-8e0c-53cf101ca0d3 | Enrollments: 7/10
+
+"[2차/2호점] 겨울방학특강 월요일 09:30" (월요일 09:30:00):
+  - ID: 2c1448bf-e8c5-48d8-a9ae-531b39107dac | Enrollments: 0/10
+  - ID: caae19d6-eb25-4b06-a444-b93bf6560e26 | Enrollments: 8/10
+  - ID: b6d7d487-7daf-4bf1-b256-4119e30d6087 | Enrollments: 8/10
+  - ID: 0a05973e-9f52-4f2d-ba75-ff030d753f02 | Enrollments: 0/10
+  - ID: 7812b4c2-e1f9-438f-b5a9-734d63d7d145 | Enrollments: 0/10
+  - ID: 4e3dbd38-2a0d-4351-95db-1c17b302dcb8 | Enrollments: 0/10
+  - ID: c755156d-5469-4ec2-839a-8a67c466b8a9 | Enrollments: 8/10
+
+"[2차/2호점] 겨울방학특강 월요일 11:00" (월요일 11:00:00):
+  - ID: b0423e21-4eed-4a01-8dd6-260f2778b203 | Enrollments: 7/10
+  - ID: da1029e0-c497-4a3d-93ec-add8a2847189 | Enrollments: 0/10
+  - ID: 32226586-899c-41a3-b3ea-42412439d5ca | Enrollments: 7/10
+  - ID: 489de914-f369-4bd3-ae54-59665fa9d7c4 | Enrollments: 0/10
+  - ID: baa84c8f-dcc0-47fd-884e-eaee8cf288d9 | Enrollments: 0/10
+  - ID: e4853030-f98f-489c-829a-542e279bd292 | Enrollments: 7/10
+  - ID: 3eb8ab8f-08ed-43a3-ae99-b4547ebe3cc0 | Enrollments: 0/10
+
+"[2차/2호점] 겨울방학특강 화요일 09:30" (화요일 09:30:00):
+  - ID: 076bcc5a-c446-493b-9114-91fbfcd9a75f | Enrollments: 0/10
+  - ID: c333c477-e2d8-48d9-939e-dc0bc0e3bdeb | Enrollments: 0/10
+  - ID: b7f6781a-40c6-4c7b-a7d7-ed7c6b83ebed | Enrollments: 10/10
+  - ID: 1caef531-e570-4650-98b2-10971204a248 | Enrollments: 10/10
+  - ID: 4b6fb4db-05f7-47b4-a28c-12542e6c26c8 | Enrollments: 0/10
+  - ID: 75b56a8d-aa16-4427-b307-725d1cdd0334 | Enrollments: 0/10
+  - ID: 964d254f-857b-4671-a2d8-7d44f582dd95 | Enrollments: 10/10
+
+"[2차/2호점] 겨울방학특강 화요일 11:00" (화요일 11:00:00):
+  - ID: b52939a2-c586-4cda-93e0-e4b668dd07d6 | Enrollments: 6/10
+  - ID: d5a5a42a-d5cf-4d24-92d2-5926b87af075 | Enrollments: 0/10
+  - ID: e7c50e68-92b4-472d-a5b0-b3677dcfcdbc | Enrollments: 0/10
+  - ID: cb92af95-3fcc-4aea-bacd-e5e8fac3b640 | Enrollments: 6/10
+  - ID: c777c781-54b5-47d0-83c5-1125451e91a6 | Enrollments: 0/10
+  - ID: 25185b95-3c8d-4336-952f-f8d7b4e1be1a | Enrollments: 0/10
+  - ID: 7e63bcf8-c5bf-4c9b-b076-8680ab5ff2a2 | Enrollments: 6/10
+
+"[2차/2호점] 겨울방학특강 화요일 13:30" (화요일 13:30:00):
+  - ID: 4745f143-584a-4992-badf-56d674a54018 | Enrollments: 0/10
+  - ID: feb1d158-0ea7-4009-8e3a-b81747dea0ab | Enrollments: 10/10
+  - ID: 243cb87b-f568-4f3f-9f06-315c34167322 | Enrollments: 0/10
+  - ID: 6efcbf40-b464-4611-83f1-cd8d762b7c34 | Enrollments: 10/10
+  - ID: 5e769d54-7ee7-44aa-9c40-692339d87c02 | Enrollments: 0/10
+  - ID: 5d3e14d3-830c-4bfd-86aa-6a2e40d23c3a | Enrollments: 0/10
+  - ID: c35af688-da3a-41a9-9ddd-edff48e114b4 | Enrollments: 10/10
+
+
+=== Empty Classes (No Enrollments) ===
+[66effa64-94a6-4829-b968-012aa1c9f0c8] [2차/1호점] 겨울방학특강 금요일 10:30 (금요일 10:30:00)
+[c99e8ed9-5051-45d5-a82e-a46af23523fb] [2차/1호점] 겨울방학특강 금요일 10:30 (금요일 10:30:00)
+[d30aec97-1e3c-43b1-be1e-75278271ef02] [2차/1호점] 겨울방학특강 금요일 10:30 (금요일 10:30:00)
+[8b4a3478-fbe8-4f5f-ad03-3cc2323d6b35] [2차/1호점] 겨울방학특강 금요일 10:30 (금요일 10:30:00)
+[eb9bacb6-ce2d-4844-9652-41f74fd3a4aa] [2차/1호점] 겨울방학특강 수요일 10:30 (수요일 10:30:00)
+[074b8d69-9b88-4ff8-9f70-f35fe444fdda] [2차/1호점] 겨울방학특강 수요일 10:30 (수요일 10:30:00)
+[5accd68c-a65d-4eb8-9207-ccf56b3578b3] [2차/1호점] 겨울방학특강 수요일 10:30 (수요일 10:30:00)
+[00032eac-0645-4f48-bdc5-3763a8e3b8ea] [2차/1호점] 겨울방학특강 수요일 10:30 (수요일 10:30:00)
+[68241f7e-12cd-4f85-a6e4-ae0d38f5969e] [2차/1호점] 겨울방학특강 월요일 10:30 (월요일 10:30:00)
+[292d47f4-a16f-45c4-aac5-87245e52d670] [2차/1호점] 겨울방학특강 월요일 10:30 (월요일 10:30:00)
+[42f511e6-4abb-4d60-bdc1-f98a2893f47b] [2차/1호점] 겨울방학특강 월요일 10:30 (월요일 10:30:00)
+[f2eb97fd-7de4-4a6c-9a6b-156504a4f64f] [2차/1호점] 겨울방학특강 월요일 10:30 (월요일 10:30:00)
+[1504a7fd-411c-4e6f-9657-a3ddd42621b5] [2차/2호점] 겨울방학특강 금요일 09:30 (금요일 09:30:00)
+[f3bd416a-8383-4ee1-8c4a-ef72a9b54e80] [2차/2호점] 겨울방학특강 금요일 09:30 (금요일 09:30:00)
+[8ea3bce8-8cf1-462a-a0f2-14ccf5b782d2] [2차/2호점] 겨울방학특강 금요일 09:30 (금요일 09:30:00)
+[2a9a5ab0-e04d-4cbc-b6d9-3ec78750c54a] [2차/2호점] 겨울방학특강 금요일 09:30 (금요일 09:30:00)
+[79ea232e-d9c3-4cb8-994b-a2533f7e759d] [2차/2호점] 겨울방학특강 금요일 11:00 (금요일 11:00:00)
+[0c59b900-f749-4e21-ad57-928c96b15f9a] [2차/2호점] 겨울방학특강 금요일 11:00 (금요일 11:00:00)
+[bc6367c1-129c-4ebb-9164-72af5ddb0023] [2차/2호점] 겨울방학특강 금요일 11:00 (금요일 11:00:00)
+[dfd8838d-c89e-4def-9b59-e4c2a1a0cc8f] [2차/2호점] 겨울방학특강 금요일 11:00 (금요일 11:00:00)
+... and 40 more

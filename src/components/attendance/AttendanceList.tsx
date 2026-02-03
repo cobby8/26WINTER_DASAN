@@ -4,12 +4,13 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/lib/supabase';
+// import { supabase } from '@/lib/supabase';
 import { Loader2 } from 'lucide-react';
 import AttendanceItem from './AttendanceItem';
 import { MakeupRegisterDialog } from './MakeupRegisterDialog';
 import { useRouter } from 'next/navigation';
 import { PlusCircle } from 'lucide-react';
+import { updateAttendanceStatus } from '@/app/actions/attendance-actions';
 
 interface StudentAttendance {
     studentId: string;
@@ -57,132 +58,45 @@ export default function AttendanceList({ date, initialData }: Props) {
             };
         }));
 
-        // DB Update
+        // DB Update via Server Action
         try {
-            // Find the student record to get attendanceId if it exists
             const cls = data.find(c => c.classId === classId);
             const std = cls?.students.find(s => s.enrollmentId === enrollmentId);
-            const attendanceId = std?.attendanceId;
 
-            if (newStatus === 'none') {
-                if (attendanceId) {
-                    // 1. Delete associated makeup tickets if any
-                    await supabase.from('makeup_tickets')
-                        .delete()
-                        .eq('original_attendance_id', attendanceId);
+            if (!cls || !std) return;
 
-                    // 2. Delete attendance record
-                    await supabase.from('attendance')
-                        .delete()
-                        .eq('id', attendanceId);
+            const result = await updateAttendanceStatus({
+                classId,
+                enrollmentId,
+                date,
+                newStatus,
+                note,
+                studentId: std.studentId,
+                studentName: std.studentName,
+                className: cls.className
+            });
 
-                    // 3. Update state to nullify attendanceId
-                    setData(prev => prev.map(c => {
-                        if (c.classId !== classId) return c;
-                        return {
-                            ...c,
-                            students: c.students.map(s => {
-                                if (s.enrollmentId !== enrollmentId) return s;
-                                return { ...s, attendanceId: null };
-                            })
-                        };
-                    }));
-                }
-                return;
-            }
-
-            let finalAttendanceId = attendanceId;
-
-            if (attendanceId) {
-                // Update existing
-                await supabase.from('attendance').update({
-                    status: newStatus,
-                    note: note
-                }).eq('id', attendanceId);
+            if (!result.success) {
+                console.error("Failed to update attendance (server):", result.error);
+                // TODO: Revert optimistic update on failure
             } else {
-                // Insert new
-                const { data: newAtt, error } = await supabase.from('attendance').insert({
-                    enrollment_id: enrollmentId,
-                    class_id: classId,
-                    date: date,
-                    status: newStatus,
-                    note: note
-                }).select('id').single();
-
-                if (!error && newAtt) {
-                    finalAttendanceId = newAtt.id;
-                    // Update state with new ID so subsequent updates work
+                // Update state with real ID (id is null if deleted)
+                if (result.attendanceId !== undefined) {
                     setData(prev => prev.map(c => {
                         if (c.classId !== classId) return c;
                         return {
                             ...c,
                             students: c.students.map(s => {
                                 if (s.enrollmentId !== enrollmentId) return s;
-                                return { ...s, attendanceId: newAtt.id };
+                                return { ...s, attendanceId: result.attendanceId || null };
                             })
                         };
                     }));
-                }
-            }
-
-            // Notification Trigger (In-App)
-            if (['present', 'late', 'absent', 'makeup'].includes(newStatus) && std) {
-                const messages: Record<string, string> = {
-                    present: '등원했습니다.',
-                    late: '지각 처리되었습니다.',
-                    absent: '결석 처리되었습니다.',
-                    makeup: '보강 처리되었습니다.'
-                };
-                const titles: Record<string, string> = {
-                    present: '등원 알림',
-                    late: '지각 알림',
-                    absent: '결석 알림',
-                    makeup: '보강 알림'
-                };
-
-                // Fire and forget to avoid blocking UI
-                supabase.from('notifications').insert({
-                    student_id: std.studentId,
-                    type: 'attendance',
-                    title: titles[newStatus],
-                    message: `[${cls?.className}] ${std.studentName} 학생이 ${messages[newStatus]}`,
-                    is_read: false
-                }).then(({ error }) => {
-                    if (error) console.error("Notification failed:", error.message);
-                });
-            }
-
-            // Handle Logic for 'Absent' (Carry-over vs Makeup)
-            if (newStatus === 'absent' && finalAttendanceId && std) {
-                // Sync to Shuttle
-                const { syncAttendanceStatusToShuttle } = await import('@/app/actions/shuttle-ops-actions');
-                await syncAttendanceStatusToShuttle(std.studentId, date, true);
-
-                // Check note for tag
-                if (note.startsWith('[이월]')) {
-                    // Deduction logic to be implemented in billing cycle
-                } else if (note.startsWith('[보강]')) {
-                    // Logic for Makeup: Create a Ticket
-                    const { data: existingTicket } = await supabase
-                        .from('makeup_tickets')
-                        .select('id')
-                        .eq('original_attendance_id', finalAttendanceId)
-                        .single();
-
-                    if (!existingTicket) {
-                        await supabase.from('makeup_tickets').insert({
-                            student_id: std.studentId,
-                            original_attendance_id: finalAttendanceId,
-                            status: 'available',
-                            expiry_date: '2026-02-28' // End of winter session
-                        });
-                    }
                 }
             }
 
         } catch (error) {
-            console.error("Failed to update attendance", error);
-            // Rollback logic could go here
+            console.error("Failed to call update action", error);
         }
     };
 

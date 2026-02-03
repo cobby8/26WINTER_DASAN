@@ -55,6 +55,7 @@ export default function ShuttleHeader({ dateStr, prevDateStr, nextDateStr }: Shu
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button
+                            suppressHydrationWarning
                             variant="ghost"
                             className={cn(
                                 "flex items-center gap-2 h-10 px-3 font-bold text-slate-900 transition-colors hover:bg-slate-100 rounded-lg",

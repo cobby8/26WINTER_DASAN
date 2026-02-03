@@ -302,16 +302,22 @@ export class SyncService {
             }
         }
 
-        // 3. Soft Delete Orphans
+        // 3. Soft Delete Orphans - DISABLED to prevent accidental deletion of 2nd session classes
+        // const orphans = dbClasses.filter(d => !touchedClassIds.has(d.id));
+        // log(`[ClassSync] Checking orphans... Found ${dbClasses.length} active classes, ${touchedClassIds.size} matched.`);
         const orphans = dbClasses.filter(d => !touchedClassIds.has(d.id));
         if (orphans.length > 0) {
-            console.log(`[ClassSync] Soft Deleting ${orphans.length} classes not in sheet...`);
-            const orphanIds = orphans.map(d => d.id);
-            await supabaseAdmin
-                .from('classes')
-                .update({ deleted_at: new Date().toISOString() })
-                .in('id', orphanIds);
+            // log(`[ClassSync-WARNING] Would have deleted ${orphans.length} classes: ${orphans.map(d => d.name).join(', ')}`);
+            console.log(`[ClassSync] SKIPPING soft delete for safety. Would have deleted: ${orphans.length} classes.`);
         }
+        // if (orphans.length > 0) {
+        //     console.log(`[ClassSync] Soft Deleting ${orphans.length} classes not in sheet...`);
+        //     const orphanIds = orphans.map(d => d.id);
+        //     await supabaseAdmin
+        //         .from('classes')
+        //         .update({ deleted_at: new Date().toISOString() })
+        //         .in('id', orphanIds);
+        // }
     }
 
     /**
@@ -330,7 +336,7 @@ export class SyncService {
     async syncShuttleTransport() {
         let count = 0;
         let errors: string[] = [];
-        const sheetName = '1차차량운행';
+        const sheetName = '2차차량운행';
 
         try {
             const rawRows = await this.sheetService.fetchRawData(sheetName);
@@ -379,40 +385,76 @@ export class SyncService {
                 const studentPhone = (row['학생'] || '').replace(/[^0-9]/g, '');
                 const parentPhone = (row['학부모'] || '').replace(/[^0-9]/g, '');
 
-                // 2-1. Find Student ID
-                // Use looser matching or robust matching if needed. 
-                // We should cache students for performance, but loop is fine for <500 rows.
-                let { data: student } = await supabaseAdmin
+                // 2-1. Find Student ID (Robust Match: Name + Phone)
+                let studentId = null;
+
+                // 1. Fetch ALL candidates with same name
+                const { data: candidates } = await supabaseAdmin
                     .from('students')
-                    .select('id')
-                    .eq('name', name)
-                    .maybeSingle();
+                    .select('id, name, student_phone, parent_phone')
+                    .eq('name', name);
 
-                // Enhanced Matching: If multiple with Same Name, check parent phone?
-                // Currently 'name' is not unique, but unique(name, parent_phone). 
-                // maybeSingle() returns one or null. If multiple, it warns/errors? 
-                // maybeSingle implies 0 or 1. If multiple, it errors.
-                // We should use .eq('name', name).eq('parent_phone', parentPhone) if possible.
-                // But sheet phone format might differ from DB.
-                // Let's stick to name for now, or improve if user requests.
+                if (candidates && candidates.length > 0) {
+                    // 2. Filter by Phone (Soft Match: Last 4 digits)
+                    const sheetSPhoneLast4 = studentPhone.slice(-4);
+                    const sheetPPhoneLast4 = parentPhone.slice(-4);
 
-                let studentId = student?.id;
+                    const match = candidates.find(c => {
+                        const dbS = (c.student_phone || '').replace(/[^0-9]/g, '');
+                        const dbP = (c.parent_phone || '').replace(/[^0-9]/g, '');
+
+                        if (sheetSPhoneLast4 && dbS.endsWith(sheetSPhoneLast4)) return true;
+                        if (sheetPPhoneLast4 && dbP.endsWith(sheetPPhoneLast4)) return true;
+
+                        // If Sheet checks fail/empty, fallback? Unlikely with duplicate names.
+                        // If only 1 candidate exists, maybe risky but often correct?
+                        // Let's stick to strict phone match if duplicates exist.
+                        // If no phone in sheet, we skip matching to be safe? 
+                        // But user data usually has phone.
+                        return false;
+                    });
+
+                    if (match) studentId = match.id;
+                }
+
                 if (!studentId) {
-                    // Create Student
-                    const { data: newStudent, error: createError } = await supabaseAdmin
-                        .from('students')
-                        .insert({
-                            name,
-                            student_phone: studentPhone,
-                            parent_phone: parentPhone,
-                        })
-                        .select('id')
-                        .single();
-                    if (createError) {
-                        errors.push(`Row ${i + 1} (${name}): Student creation failed - ${createError.message}`);
+                    // Create (with Unique Constraint Recovery)
+                    try {
+                        const { data: newStudent, error: createError } = await supabaseAdmin
+                            .from('students')
+                            .insert({
+                                name,
+                                student_phone: studentPhone,
+                                parent_phone: parentPhone,
+                            })
+                            .select('id')
+                            .single();
+
+                        if (createError) {
+                            if (createError.code === '23505') { // Unique Key Violation
+                                // Recovery: Fetch by keys
+                                const { data: recovery } = await supabaseAdmin
+                                    .from('students')
+                                    .select('id')
+                                    .eq('name', name)
+                                    .eq('parent_phone', parentPhone)
+                                    .maybeSingle();
+                                if (recovery) studentId = recovery.id;
+                                else {
+                                    errors.push(`Row ${i + 1} (${name}): Create failed (Unique) & Recovery failed.`);
+                                    continue;
+                                }
+                            } else {
+                                errors.push(`Row ${i + 1} (${name}): Student creation failed - ${createError.message}`);
+                                continue;
+                            }
+                        } else {
+                            studentId = newStudent.id;
+                        }
+                    } catch (e: any) {
+                        errors.push(`Row ${i + 1} (${name}): Critical Error - ${e.message}`);
                         continue;
                     }
-                    studentId = newStudent.id;
                 }
 
                 // 2-2. Parse Time & Info
@@ -443,13 +485,13 @@ export class SyncService {
 
                 // 2-3. Match against DB
                 const key = `${studentId}-${dayCode}-${type}`;
-                const candidates = dbMap.get(key) || [];
+                const scheduleCandidates = dbMap.get(key) || [];
 
                 let matchedDbSchedule = null;
 
-                if (candidates.length > 0) {
+                if (scheduleCandidates.length > 0) {
                     // If multiple? Take first.
-                    matchedDbSchedule = candidates[0];
+                    matchedDbSchedule = scheduleCandidates[0];
                     touchedScheduleIds.add(matchedDbSchedule.id);
 
                     // Version Check: Has it changed?
