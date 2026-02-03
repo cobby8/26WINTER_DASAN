@@ -7,20 +7,26 @@ export async function GET() {
         console.log('[RestoreAPI] Starting restoration...');
 
         // 1. Restore Students
-        const { error: studentError, count: sCount } = await supabaseAdmin
+        const { data: sData, error: studentError } = await supabaseAdmin
             .from('students')
             .update({ deleted_at: null })
             .not('deleted_at', 'is', null)
-            .select('id', { count: 'exact' });
+            .select('id');
+
+        const sCount = sData ? sData.length : 0;
 
         if (studentError) throw studentError;
 
         // 2. Restore Classes (Safety)
-        const { error: classError, count: cCount } = await supabaseAdmin
+        const { data: cData, error: classError } = await supabaseAdmin
             .from('classes')
             .update({ deleted_at: null })
             .not('deleted_at', 'is', null)
-            .select('id', { count: 'exact' });
+            .select('id');
+
+        const cCount = cData ? cData.length : 0;
+
+        if (classError) throw classError;
 
         return NextResponse.json({
             success: true,
@@ -29,7 +35,8 @@ export async function GET() {
             message: 'All soft-deleted data restored.'
         });
 
-    } catch (e: any) {
-        return NextResponse.json({ success: false, error: e.message }, { status: 500 });
+    } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : String(e);
+        return NextResponse.json({ success: false, error: msg }, { status: 500 });
     }
 }
