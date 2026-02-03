@@ -126,7 +126,9 @@ export async function getDailyShuttleData(dateStr: string): Promise<{ success: b
             const deleted = s.deleted_at ? new Date(s.deleted_at) : null;
 
             if (created > endOfDay) return false;
-            if (deleted && deleted < startOfDay) return false;
+            // CHANGE: Exclude items deleted *on or before* the end of this day.
+            // If it was deleted today (12:00), deleted <= endOfDay (23:59) is TRUE. -> Hidden.
+            if (deleted && deleted <= endOfDay) return false;
 
             return true;
         });
