@@ -200,6 +200,8 @@ export class SyncService {
         }
 
         // --- PHASE 3: Cleanup Students ---
+        // DISABLED: To prevent accidental mass deletion if sheet parsing fails or tab changes.
+        /*
         try {
             const { data: allActiveStudents } = await supabaseAdmin
                 .from('students')
@@ -221,6 +223,7 @@ export class SyncService {
             console.error('Student Cleanup Error:', cleanupErr);
             errors.push(`Student Cleanup Failed: ${cleanupErr.message}`);
         }
+        */
 
         // 4. 차량 운행(셔틀) 데이터 동기화 통합 호출
         try {
