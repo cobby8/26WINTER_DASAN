@@ -1,7 +1,27 @@
 import { GoogleSheetService } from './googleSheet';
 import { supabaseAdmin } from './supabase';
-import { ParsedStudent, ParsedEnrollment } from '@/types/sheet';
 import { revalidatePath } from 'next/cache';
+
+interface ClassDefinition {
+    name: string;
+    day_of_week: string;
+    start_time: string;
+    end_time: string;
+    branch: string;
+    session: string;
+}
+
+interface ShuttleSchedule {
+    id: string;
+    student_id: string | null;
+    day_of_week: string;
+    type: string;
+    time: string;
+    location_name: string;
+    location_address: string;
+    created_at: string;
+    deleted_at: string | null;
+}
 
 export class SyncService {
     private sheetService: GoogleSheetService;
@@ -12,7 +32,7 @@ export class SyncService {
 
     async syncData() {
         let processedCount = 0;
-        let errors: string[] = [];
+        const errors: string[] = [];
 
         console.log('--- Sync Data Process Started ---');
 
@@ -27,15 +47,16 @@ export class SyncService {
                 rawRows = await this.sheetService.fetchRawData();
             }
             console.log(`Fetched ${rawRows.length} rows.`);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Fetch Raw Data Error:', err);
-            throw new Error(`Sheet Data Fetch Failed: ${err.message}`);
+            const msg = err instanceof Error ? err.message : String(err);
+            throw new Error(`Sheet Data Fetch Failed: ${msg}`);
         }
 
         // --- PHASE 0: Parse ALL Rows ---
         // We need to gather all Classes first to perform "Global Sync" (and cleanup deleted ones).
         const parsedData = [];
-        const uniqueClasses = new Map<string, any>(); // Key: `${day}-${time}-${session}-${branch}`
+        const uniqueClasses = new Map<string, ClassDefinition>(); // Key: `${day}-${time}-${session}-${branch}`
 
         for (let i = 0; i < rawRows.length; i++) {
             const rawRow = rawRows[i];
@@ -87,8 +108,9 @@ export class SyncService {
                     }
                 }
 
-            } catch (e: any) {
-                errors.push(`Row ${i + 1} Parse Error: ${e.message}`);
+            } catch (e: unknown) {
+                const msg = e instanceof Error ? e.message : String(e);
+                errors.push(`Row ${i + 1} Parse Error: ${msg}`);
             }
         }
 
@@ -96,8 +118,9 @@ export class SyncService {
         // Goal: Ensure all unique classes exist. Soft Delete any DB class NOT in uniqueClasses.
         try {
             await this.syncClasses(uniqueClasses);
-        } catch (msg: any) {
-            errors.push(`Class Sync Critical Error: ${msg.message || msg}`);
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : String(err);
+            errors.push(`Class Sync Critical Error: ${msg}`);
             // If Class Sync fails, we probably shouldn't proceed with enrollments as they depend on valid class IDs.
             // But we try anyway best effort? No, safely return.
             return { processedCount: 0, errors };
@@ -193,9 +216,10 @@ export class SyncService {
 
                 processedCount++;
 
-            } catch (e: any) {
-                console.error(`Error processing student ${studentName}:`, e.message);
-                errors.push(`Row ${rowIndex + 1} (${studentName}): ${e.message}`);
+            } catch (e: unknown) {
+                const msg = e instanceof Error ? e.message : String(e);
+                console.error(`Error processing student ${studentName}:`, msg);
+                errors.push(`Row ${rowIndex + 1} (${studentName}): ${msg}`);
             }
         }
 
@@ -233,9 +257,10 @@ export class SyncService {
             if (shuttleResult.errors.length > 0) {
                 errors.push(...shuttleResult.errors.map(e => `[Shuttle] ${e}`));
             }
-        } catch (shuttleErr: any) {
+        } catch (shuttleErr: unknown) {
             console.error('Shuttle Sync Integration Error:', shuttleErr);
-            errors.push(`Shuttle Sync Failed: ${shuttleErr.message}`);
+            const msg = shuttleErr instanceof Error ? shuttleErr.message : String(shuttleErr);
+            errors.push(`Shuttle Sync Failed: ${msg}`);
         }
 
         console.log(`--- Sync Complete. Processed: ${processedCount}, Errors: ${errors.length} ---`);
@@ -256,7 +281,7 @@ export class SyncService {
     /**
      * Phase 1: Sync Classes Table (Versioning / Soft Delete)
      */
-    async syncClasses(sheetClasses: Map<string, any>) {
+    async syncClasses(sheetClasses: Map<string, ClassDefinition>) {
         console.log(`[ClassSync] Found ${sheetClasses.size} unique classes in sheet.`);
 
         // 1. Fetch ALL Active DB Classes
@@ -362,13 +387,7 @@ export class SyncService {
             if (fetchError) throw new Error(`Fetch Schedules Error: ${fetchError.message}`);
 
             const activeSchedules = existingSchedules || [];
-            // Map for quick lookup: Key = `${studentId}-${dayCode}-${type}`
-            const dbMap = new Map<string, any[]>();
-            activeSchedules.forEach(s => {
-                const key = `${s.student_id}-${s.day_of_week}-${s.type}`;
-                if (!dbMap.has(key)) dbMap.set(key, []);
-                dbMap.get(key)!.push(s);
-            });
+            const dbMap = new Map<string, ShuttleSchedule[]>();
 
             // Track which DB IDs were "touched" (matched). Untouched ones will be soft-deleted.
             const touchedScheduleIds = new Set<string>();
@@ -377,7 +396,7 @@ export class SyncService {
             const dayMap: Record<string, string> = { '월': 'Mon', '화': 'Tue', '수': 'Wed', '목': 'Thu', '금': 'Fri', '토': 'Sat', '일': 'Sun' };
 
             for (let i = 0; i < rawRows.length; i++) {
-                const row = rawRows[i] as any;
+                const row = rawRows[i] as unknown as Record<string, string>;
                 const name = (row['수강생 이름'] || '').trim();
                 if (!name || name === '수강생 이름' || name === '성명') continue;
 
@@ -454,8 +473,9 @@ export class SyncService {
                         } else {
                             studentId = newStudent.id;
                         }
-                    } catch (e: any) {
-                        errors.push(`Row ${i + 1} (${name}): Critical Error - ${e.message}`);
+                    } catch (e: unknown) {
+                        const msg = e instanceof Error ? e.message : String(e);
+                        errors.push(`Row ${i + 1} (${name}): Critical Error - ${msg}`);
                         continue;
                     }
                 }
@@ -470,9 +490,9 @@ export class SyncService {
                         if (match) {
                             if (type === 'boarding') {
                                 const [h, m] = match[1].split(':').map(Number);
-                                let val = h * 60 + m - 30;
-                                let h2 = Math.floor(val / 60);
-                                let m2 = val % 60;
+                                const val = h * 60 + m - 30;
+                                const h2 = Math.floor(val / 60);
+                                const m2 = val % 60;
                                 timeStr = `${h2.toString().padStart(2, '0')}:${m2.toString().padStart(2, '0')}:00`;
                             } else {
                                 timeStr = `${match[2]}:00`;
@@ -577,7 +597,7 @@ export class SyncService {
         }
     }
 
-    private parseShuttleTime(timeStr: any): string | null {
+    private parseShuttleTime(timeStr: unknown): string | null {
         if (!timeStr || typeof timeStr !== 'string') return null;
         const match = timeStr.match(/(\d{1,2}):(\d{2})/);
         if (match) {

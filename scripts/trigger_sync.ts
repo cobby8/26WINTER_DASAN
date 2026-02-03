@@ -9,9 +9,13 @@ async function runSync() {
         const service = new SyncService();
         const result = await service.syncData();
         console.log('Sync Result:', JSON.stringify(result, null, 2));
-    } catch (e: any) {
-        console.error('Sync Error:', e.message);
-        console.error(e.stack);
+    } catch (e: unknown) {
+        if (e instanceof Error) {
+            console.error('Sync Error:', e.message);
+            console.error(e.stack);
+        } else {
+            console.error('Sync Error:', String(e));
+        }
     }
 }
 
