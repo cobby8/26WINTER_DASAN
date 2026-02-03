@@ -42,7 +42,7 @@ export class SyncService {
             try {
                 rawRows = await this.sheetService.fetchRawData('수강신청');
                 if (rawRows.length === 0) throw new Error('Empty');
-            } catch (e) {
+            } catch {
                 console.log('Tab "수강신청" not found or empty, trying default sheet...');
                 rawRows = await this.sheetService.fetchRawData();
             }
@@ -299,7 +299,7 @@ export class SyncService {
         // We iterate "Sheet Classes" -> Ensure they exist in DB (Update if needed, Insert if new)
         // Then iterate "DB Classes" -> If not touched, Soft Delete.
 
-        for (const [key, cls] of sheetClasses) {
+        for (const cls of sheetClasses.values()) {
             // Key is `${day}-${time}-${session}-${branch}`
             // Find in DB
             const match = dbClasses.find(d =>
@@ -363,7 +363,7 @@ export class SyncService {
      */
     async syncShuttleTransport() {
         let count = 0;
-        let errors: string[] = [];
+        const errors: string[] = [];
         const sheetName = '2차차량운행';
 
         try {

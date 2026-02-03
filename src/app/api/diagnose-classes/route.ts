@@ -11,13 +11,15 @@ export async function GET() {
         const active = all.filter(c => !c.deleted_at);
         const deleted = all.filter(c => c.deleted_at);
 
-        const activeCounts = active.reduce((acc: any, c: any) => {
-            acc[c.session] = (acc[c.session] || 0) + 1;
+        const activeCounts = active.reduce((acc: Record<string, number>, c: Record<string, unknown>) => {
+            const session = c.session as string;
+            acc[session] = (acc[session] || 0) + 1;
             return acc;
         }, {});
 
-        const deletedCounts = deleted.reduce((acc: any, c: any) => {
-            acc[c.session] = (acc[c.session] || 0) + 1;
+        const deletedCounts = deleted.reduce((acc: Record<string, number>, c: Record<string, unknown>) => {
+            const session = c.session as string;
+            acc[session] = (acc[session] || 0) + 1;
             return acc;
         }, {});
 
